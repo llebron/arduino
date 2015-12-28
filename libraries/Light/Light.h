@@ -6,10 +6,10 @@ A simple library for a light connected between a digital pin and ground
 
 */
 
-#include "Arduino.h"
-
 #ifndef LIGHT_H
 #define LIGHT_H
+
+#include "Arduino.h"
 
 //max pwm value
 const int MAX_PWM_VAL = 255;
