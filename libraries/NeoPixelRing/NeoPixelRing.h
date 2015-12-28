@@ -50,6 +50,7 @@ private:
 		altered as the ring spins
 	*/
 	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
+	void stopSpin();
 	void updateSpin(long currTime);
 	uint16_t spinOffset = 0;
 	// is the ring spinning?

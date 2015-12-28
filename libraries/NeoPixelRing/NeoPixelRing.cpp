@@ -44,6 +44,10 @@ void NeoPixelRing::spin(long arg_spinIncrementDuration, boolean arg_isClockwiseS
 	isClockwiseSpin = arg_isClockwiseSpin;	
 }
 
+void NeoPixelRing::stopSpin() {
+	isSpinning = false;
+}
+
 void NeoPixelRing::updateSpin(long currTime) {
 	//how long since spin offset was last incremented
 	long timePassed = currTime - lastSpinIncrementTime;
