@@ -8,7 +8,6 @@ Set blink rate current
 Set color current
 Set brightness current
 Update loop
-stop spin
 
 Nice to have: accel/decel for spin
 */
@@ -30,8 +29,15 @@ NeoPixelRing::~NeoPixelRing() {
 
 void NeoPixelRing::update() {
 	long currTime = millis();
+	bool isRefreshRing = false;
+	
 	// process the spin offset first, so values will be processed accurately
-	if (isSpinning) updateSpin(currTime);
+	if (isSpinning) {
+		isRefreshRing = updateSpin(currTime);
+	}
+	
+	// series of isRefreshRing |= methodThatIndicatesRefreshRing (e.g. blink, switches, etc)
+	// if isRefreshRing, change the lights and call show()
 }
 
 void NeoPixelRing::spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin) {
@@ -48,7 +54,7 @@ void NeoPixelRing::stopSpin() {
 	isSpinning = false;
 }
 
-void NeoPixelRing::updateSpin(long currTime) {
+bool NeoPixelRing::updateSpin(long currTime) {
 	//how long since spin offset was last incremented
 	long timePassed = currTime - lastSpinIncrementTime;
 		
@@ -62,7 +68,9 @@ void NeoPixelRing::updateSpin(long currTime) {
 		// modulo size to keep the spin offset within simple bounds (-maxIndex, maxIndex)
 		spinOffset = spinOffset % size;
 		lastSpinIncrementTime = millis();
+		return true;
 	}
+	return false;
 }
 
 uint16_t NeoPixelRing::getAbsoluteIndexFromCurrentIndex(uint16_t index) {

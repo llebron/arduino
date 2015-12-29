@@ -51,7 +51,8 @@ private:
 	*/
 	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
 	void stopSpin();
-	void updateSpin(long currTime);
+	// returns true if spin offset was actually altered, meaning the ring needs to be refreshed
+	bool updateSpin(long currTime);
 	uint16_t spinOffset = 0;
 	// is the ring spinning?
 	bool isSpinning = false;
