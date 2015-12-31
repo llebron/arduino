@@ -11,12 +11,19 @@ References to the current indices of the pixels (relative to the current spin of
 #ifndef NEOPIXELRING_H
 #define NEOPIXELRING_H
 
+#include <limits.h>
+
 #include "../Adafruit_NeoPixel/Adafruit_NeoPixel.h"
 #include "../NeoPixel/NeoPixel.h"
 #include "Arduino.h"
 
 //max color value
 const int MAX_RING_SPEED = 255;
+
+// spinIncrementDuration flag used to stop the spin
+const long STOP_SPIN_INCREMENT_DURATION = -1;
+// lastSpinIncrementTime flag used to guarantee the next update will increment the offset
+const long INCREMENT_SPIN_AT_NEXT_UPDATE = LONG_MIN;
 
 class NeoPixelRing {
 public:
@@ -25,10 +32,25 @@ public:
 		Initializes the ring with size and pin
 	*/
 	NeoPixelRing(uint16_t size, uint8_t pin);
-	~NeoPixelRing();	
+	~NeoPixelRing();
+	
+	/**
+		spin the wheel
+		arg_spinIncrementDuration: how long to wait between spin increments in ms
+		arg_isClockwiseSpin: true if spinning clockwise, otherwise counter clockwise
+		If this is called with STOP_SPIN_INCREMENT_DURATION (-1), will stop the spin
+	*/
+	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
+	
+	/**
+		start/stop the spin, using the current spinIncrementDuration and direction
+		Will not start the spin if the increment time is set to STOP_SPIN_INCREMENT_DURATION
+	*/
+	void toggleSpin();	
 	
 	/**
 		update the ring, must be called every loop for best accuracy
+		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
 	*/
 	void update();	
 	
@@ -49,19 +71,17 @@ private:
 		tracks the current offset of the lights from their absolute indices, 
 		altered as the ring spins
 	*/
-	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
-	void stopSpin();
-	// returns true if spin offset was actually altered, meaning the ring needs to be refreshed
+	// update the spin, returns true if spin offset was actually altered, meaning the ring needs to be refreshed
 	bool updateSpin(long currTime);
 	uint16_t spinOffset = 0;
 	// is the ring spinning?
 	bool isSpinning = false;
-	// how long between spin increments
-	long spinIncrementDuration = 0;
+	// how long between spin increments - initialized to the "null" duration
+	long spinIncrementDuration = STOP_SPIN_INCREMENT_DURATION;
 	// is the ring spinning clockwise or counter clockwise?
-	bool isClockwiseSpin = false;
+	bool isClockwiseSpin = true;
 	// tracking last time spin was incremented
-	long lastSpinIncrementTime = 0;
+	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
 	// utilities for converting a current index to an absolute
 	uint16_t getAbsoluteIndexFromCurrentIndex(uint16_t index);

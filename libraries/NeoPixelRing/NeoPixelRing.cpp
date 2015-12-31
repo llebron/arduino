@@ -41,25 +41,39 @@ void NeoPixelRing::update() {
 }
 
 void NeoPixelRing::spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin) {
-	if (!isSpinning) {
-		// if it's a fresh start, set spin increment tracking time to current time
-		lastSpinIncrementTime = millis();
-		isSpinning = true;
-	}
 	spinIncrementDuration = arg_spinIncrementDuration;
 	isClockwiseSpin = arg_isClockwiseSpin;	
+	
+	// If STOP_SPIN_INCREMENT_DURATION is passed in, stop the spin and return immediately
+	if (arg_spinIncrementDuration == STOP_SPIN_INCREMENT_DURATION) {
+		isSpinning = false;
+		return;
+	}
+	
+	// if it's a fresh start, set spin increment tracking time to increment at the next update
+	if (!isSpinning) {
+		lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
+		isSpinning = true;
+	}
 }
 
-void NeoPixelRing::stopSpin() {
-	isSpinning = false;
+void NeoPixelRing::toggleSpin() {
+	
+	if (!isSpinning) {
+		// just call spin with the current settings
+		spin(spinIncrementDuration, isClockwiseSpin);
+	} else {
+		isSpinning = false;
+	}
 }
 
 bool NeoPixelRing::updateSpin(long currTime) {
-	//how long since spin offset was last incremented
-	long timePassed = currTime - lastSpinIncrementTime;
-		
-	// if enough time has passed, increment the spin offset
-	if (timePassed >= spinIncrementDuration) {
+	bool incrementSpin = (lastSpinIncrementTime == INCREMENT_SPIN_AT_NEXT_UPDATE) ||
+							(currTime - lastSpinIncrementTime) >= spinIncrementDuration;
+	
+	// if the lastSpinIncrementTime is the INCREMENT_SPIN_AT_NEXT_UPDATE flag, 
+	// or if enough time has passed increment the spin offset
+	if (incrementSpin) {
 		if (isClockwiseSpin) {
 			spinOffset++;
 		} else {
@@ -68,9 +82,8 @@ bool NeoPixelRing::updateSpin(long currTime) {
 		// modulo size to keep the spin offset within simple bounds (-maxIndex, maxIndex)
 		spinOffset = spinOffset % size;
 		lastSpinIncrementTime = millis();
-		return true;
 	}
-	return false;
+	return incrementSpin;
 }
 
 uint16_t NeoPixelRing::getAbsoluteIndexFromCurrentIndex(uint16_t index) {
