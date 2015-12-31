@@ -37,9 +37,15 @@ void NeoPixelRing::update() {
 	}
 	
 	// series of isRefreshRing |= methodThatIndicatesRefreshRing (e.g. blink, switches, etc)
+	
+	// process any lights that are actively blinking
+	
 	// if isRefreshRing, change the lights and call show()
 	if (isRefreshRing) {
-		 // updating spin means updating every light
+		 // incrementing spin means updating every light
+		 
+		 // otherwise, can just maintain a set of lights to be updated which have been altered via one of these means:
+		 // index via their absolute value - and then execute the change using t
 
 		 // on/off & blink: just the lights that are actually turning from on <-> off
 		 // color: just the lights with colors changing
@@ -91,6 +97,10 @@ bool NeoPixelRing::updateSpinOffset(long currTime) {
 		lastSpinIncrementTime = millis();
 	}
 	return incrementSpin;
+}
+
+uint16_t NeoPixelRing::getCurrentIndexFromAbsoluteIndex(uint16_t index) {
+	return getWrappedIndex(index + spinOffset);
 }
 
 uint16_t NeoPixelRing::getAbsoluteIndexFromCurrentIndex(uint16_t index) {

@@ -83,7 +83,8 @@ private:
 	// tracking last time spin was incremented
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
-	// utilities for converting a current index to an absolute
+	// utilities for converting between current and absolute indices
+	uint16_t getCurrentIndexFromAbsoluteIndex(uint16_t index);
 	uint16_t getAbsoluteIndexFromCurrentIndex(uint16_t index);
 	uint16_t getWrappedIndex(uint16_t index);
 };
