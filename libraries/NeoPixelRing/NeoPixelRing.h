@@ -72,7 +72,7 @@ private:
 		altered as the ring spins
 	*/
 	// update the spin, returns true if spin offset was actually altered, meaning the ring needs to be refreshed
-	bool updateSpin(long currTime);
+	bool updateSpinOffset(long currTime);
 	uint16_t spinOffset = 0;
 	// is the ring spinning?
 	bool isSpinning = false;

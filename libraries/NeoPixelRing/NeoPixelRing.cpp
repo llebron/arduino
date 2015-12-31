@@ -33,11 +33,18 @@ void NeoPixelRing::update() {
 	
 	// process the spin offset first, so values will be processed accurately
 	if (isSpinning) {
-		isRefreshRing = updateSpin(currTime);
+		isRefreshRing = updateSpinOffset(currTime);
 	}
 	
 	// series of isRefreshRing |= methodThatIndicatesRefreshRing (e.g. blink, switches, etc)
 	// if isRefreshRing, change the lights and call show()
+	if (isRefreshRing) {
+		 // updating spin means updating every light
+
+		 // on/off & blink: just the lights that are actually turning from on <-> off
+		 // color: just the lights with colors changing
+		 // brightness: just the lights with the brightness changing
+	}
 }
 
 void NeoPixelRing::spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin) {
@@ -67,7 +74,7 @@ void NeoPixelRing::toggleSpin() {
 	}
 }
 
-bool NeoPixelRing::updateSpin(long currTime) {
+bool NeoPixelRing::updateSpinOffset(long currTime) {
 	bool incrementSpin = (lastSpinIncrementTime == INCREMENT_SPIN_AT_NEXT_UPDATE) ||
 							(currTime - lastSpinIncrementTime) >= spinIncrementDuration;
 	
