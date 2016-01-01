@@ -3,6 +3,10 @@
 void NeoPixel::update() {
 }
 
+bool NeoPixel::isOn() {
+	return _isOn;
+}
+
 void NeoPixel::setBrightnessPercent(float arg_brightnessPercent) {
 	if (arg_brightnessPercent < 0) {
 		arg_brightnessPercent = 0;

@@ -4,7 +4,7 @@ Larry LeBron
 
 A library wrapping Adafruit's Neopixel library, with some functionality specific to their ring
 e.g. spinning, blinking, setting clusters of lights
-References to the absolute indices of the pixels are tagged with absolute
+References to the starting indices of the pixels are tagged with starting
 References to the current indices of the pixels (relative to the current spin offset) are tagged with current
 */
 
@@ -53,14 +53,14 @@ public:
 	void toggleSpin();	
 	
 	/**
-		Turn on the light at this absolute index, and add it to the tracking set
+		Turn on the this ring index, and add it to the tracking set
 	*/
-	void turnOnAbsolute(uint16_t index);
+	void turnOnRingIndex(uint16_t index);
 	
 	/**
-		Turn off the light at this absolute index, and add it to the tracking set
+		Turn off this ring index, and add it to the tracking set
 	*/
-	void turnOffAbsolute(uint16_t index);
+	void turnOffRingIndex(uint16_t index);
 	
 	/**
 		update the ring, must be called every loop for best accuracy
@@ -72,15 +72,24 @@ public:
 private:
 	// the neopixel ring - library defined by Adafruit
 	Adafruit_NeoPixel ring;	
+	// array of custom NeoPixel- one for each in ring
+	NeoPixel* pixels;
 	// the size of the ring
 	uint16_t size;
 	// the max index of the ring
 	uint16_t maxIndex;
-	// array of on/off flags matching the absolute index for each pixel
-	bool* lightActiveStatusAbsolute;
-	// array of custom NeoPixel- one for each in ring
-	NeoPixel* pixels;
-	std::set<int> lightsChangedSinceLastUpdate;
+
+	// array of on/off flags matching the ring indices
+	bool* ringIndexActiveStatus;
+	// tracking set for ring indices changed 
+	std::set<uint16_t> ringIndicesChangedSinceLastUpdate;
+	
+	/**
+		update the ring pixel value for this absolute index.
+		Uses the ring index value for on/off and the information for 
+		the NeoPixel object currently at this index, compensating for spin offset
+	*/
+	void updateRingIndex(uint16_t ringIndex); //Unsure of which way to go so far on this
 	
 	/* 
 		tracks the current offset of the lights from their absolute indices, 
@@ -99,8 +108,8 @@ private:
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
 	// utilities for converting between current and absolute indices
-	uint16_t getCurrentIndexFromAbsoluteIndex(uint16_t index);
-	uint16_t getAbsoluteIndexFromCurrentIndex(uint16_t index);
+	uint16_t getCurrentIndexFromStartingIndex(uint16_t index);
+	uint16_t getStartingIndexFromCurrentIndex(uint16_t index);
 	uint16_t getWrappedIndex(uint16_t index);
 };
 

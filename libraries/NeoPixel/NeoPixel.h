@@ -23,6 +23,11 @@ public:
 	*/
 	void update();	
 	
+	/**
+		Is the light on in its blink cycle?
+	*/
+	bool isOn();
+	
 	// blink(onOffDuration)
 	
 	// stopBlink() - should set light to on - absolute light on/off is managed by the ring class
@@ -38,7 +43,7 @@ public:
 	
 private:
 	// is the light on in its current blink cycle
-	bool isOn = false;
+	bool _isOn = false;
 	
 	// brightness 0 - 1 - multiplies the RGB values when setting color
 	float brightnessPercent = 1;
