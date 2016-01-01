@@ -1,10 +1,22 @@
 #include "NeoPixel.h"
 
-void NeoPixel::update() {
+bool NeoPixel::updateBlink(long currTime) {
+
+	//how long as blink been in current state?
+	long timePassed = currTime - blinkToggleTime;
+	
+	// if enough time has passed - toggle _isOn, set the blinkToggleTime,
+	// and return true
+	if (timePassed >= blinkLength) {
+		_isBlinkOn = !_isBlinkOn;
+		blinkToggleTime = currTime;
+		return true;
+	}
+	return false;
 }
 
-bool NeoPixel::isOn() {
-	return _isOn;
+bool NeoPixel::isBlinkOn() {
+	return _isBlinkOn;
 }
 
 void NeoPixel::setBrightnessPercent(float arg_brightnessPercent) {

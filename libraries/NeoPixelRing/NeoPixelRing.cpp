@@ -42,7 +42,9 @@ void NeoPixelRing::update() {
 		spinOffsetChanged = updateSpinOffset(currTime);
 	}
 	
-	// process any lights that are actively blinking
+	// process any lights that are actively blinking - if any lights toggle blink value
+	// it'll update add its index to ringIndicesChangedSinceLastUpdate
+	updateBlinkingPixels(currTime);
 	
 	// Need to refresh the ring if there are any changed lights
 	isRefreshRing = spinOffsetChanged || !ringIndicesChangedSinceLastUpdate.empty();
@@ -69,13 +71,26 @@ void NeoPixelRing::update() {
 	}
 }
 
+void NeoPixelRing::updateBlinkingPixels(long currTime) {
+	for (std::set<uint16_t>::iterator it=blinkingPixels.begin(); it!=blinkingPixels.end(); it++) {
+    	uint16_t blinkingPixelStartingIndex = *it;
+    	NeoPixel blinkingPixel = pixels[blinkingPixelStartingIndex];
+    	bool pixelBlinked = blinkingPixel.updateBlink(currTime);
+    	// if the pixel blinks this update, add it to the tracking set
+    	if (pixelBlinked) {
+    		uint16_t currentIndexForPixel = getCurrentIndexFromStartingIndex(blinkingPixelStartingIndex);
+    		ringIndicesChangedSinceLastUpdate.insert(currentIndexForPixel);
+    	}
+  	}
+}
+
 void NeoPixelRing::updateRingIndex(uint16_t ringIndex) {
 	// get the starting index of the pixel currently at this index to access its state
 	uint16_t startingIndexOfCurrentPixel = getStartingIndexFromCurrentIndex(ringIndex);
 	NeoPixel pixel = pixels[startingIndexOfCurrentPixel];
 	
 	// Is the light on  both in absolute terms and relative to its blink cycle?
-	bool isOn = ringIndexActiveStatus[ringIndex] && pixel.isOn();
+	bool isOn = ringIndexActiveStatus[ringIndex] && pixel.isBlinkOn();
 	
 	uint8_t r;
 	uint8_t g;

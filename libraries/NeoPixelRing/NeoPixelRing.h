@@ -72,7 +72,7 @@ public:
 private:
 	// the neopixel ring - library defined by Adafruit
 	Adafruit_NeoPixel ring;	
-	// array of custom NeoPixel- one for each in ring
+	// array of custom NeoPixel- one for each in ring - allows reference to pixels by starting index
 	NeoPixel* pixels;
 	// the size of the ring
 	uint16_t size;
@@ -83,6 +83,12 @@ private:
 	bool* ringIndexActiveStatus;
 	// tracking set for ring indices changed 
 	std::set<uint16_t> ringIndicesChangedSinceLastUpdate;
+	
+	
+	// tracking set for blinking pixels - stores the pixel's starting index
+	std::set<uint16_t> blinkingPixels;
+	// update the currently blinking pixels
+	void updateBlinkingPixels(long currTime);
 	
 	/**
 		update the ring pixel value for this absolute index.
