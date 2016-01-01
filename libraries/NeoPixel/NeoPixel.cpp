@@ -1,5 +1,26 @@
 #include "NeoPixel.h"
 
+void NeoPixel::setRed(uint8_t r) {
+	red = getCappedColorValue(r);
+}
+
+void NeoPixel::setGreen(uint8_t g) {
+	green = getCappedColorValue(g);
+}
+
+void NeoPixel::setBlue(uint8_t b) {
+	blue = getCappedColorValue(b);
+}
+
+uint8_t NeoPixel::getCappedColorValue(uint8_t colorVal) {
+	if (colorVal < 0) {
+		colorVal = 0;
+	} else if (colorVal > MAX_COLOR_VAL) {
+		colorVal = MAX_COLOR_VAL;
+	}
+	return colorVal;
+}
+
 bool NeoPixel::updateBlink(long currTime) {
 
 	//how long as blink been in current state?

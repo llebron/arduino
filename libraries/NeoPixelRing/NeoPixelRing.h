@@ -2,10 +2,23 @@
 NeoPixelRing.h
 Larry LeBron
 
-A library wrapping Adafruit's Neopixel library, with some functionality specific to their ring
+A library wrapping Adafruit's Neopixel library, with some functionality specific to their NeoPixel ring
 e.g. spinning, blinking, setting clusters of lights
-References to the starting indices of the pixels are tagged with starting
-References to the ring indices of the pixels (relative to the current spin offset) are tagged with ringIndex
+References to the starting indices of the pixels are tagged with 'starting'
+References to the ring indices of the pixels (relative to the current spin offset) are tagged with 'ringIndex'
+*/
+
+/*
+TODO:
+Put to sleep if no activity over time
+Set color
+Set brightness
+
+Random
+Rainbow
+Arrays or Vectors of indices
+
+Nice to have: accel/decel for spin
 */
 
 #ifndef NEOPIXELRING_H

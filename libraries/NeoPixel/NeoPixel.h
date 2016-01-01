@@ -39,6 +39,10 @@ public:
 	// set brightness percent from 0 <-> 1
 	void setBrightnessPercent(float arg_brightnessPercent);
 	
+	void setRed(uint8_t r);
+	void setGreen(uint8_t g);
+	void setBlue(uint8_t b);
+	
 	// get the color value - takes current brightness into account
 	uint8_t getRed();
 	uint8_t getGreen();
@@ -56,6 +60,8 @@ private:
 	uint8_t red = MAX_COLOR_VAL;
 	uint8_t green = MAX_COLOR_VAL;
 	uint8_t blue = MAX_COLOR_VAL;
+	// cap the colorVal from 0 <-> MAX_COLOR_VAL
+	uint8_t getCappedColorValue(uint8_t colorVal);
 	
 	// blinking logic - whether or not light is blinking is tracked by the NeoPixelRing
 	// when did blink last toggle

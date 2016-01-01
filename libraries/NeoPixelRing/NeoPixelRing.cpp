@@ -1,16 +1,5 @@
 #include "NeoPixelRing.h"
 
-/*
-TODO:
-Put to sleep if no activity over time
-Set blink rate current
-Set color current
-Set brightness current
-Update loop
-
-Nice to have: accel/decel for spin
-*/
-
 NeoPixelRing::NeoPixelRing(uint16_t arg_size, uint8_t pin) {
 	size = arg_size;
 	maxIndex = size-1;
