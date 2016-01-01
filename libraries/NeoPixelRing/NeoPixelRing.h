@@ -12,10 +12,14 @@ References to the current indices of the pixels (relative to the current spin of
 #define NEOPIXELRING_H
 
 #include <limits.h>
+#include "Arduino.h"
 
 #include "../Adafruit_NeoPixel/Adafruit_NeoPixel.h"
 #include "../NeoPixel/NeoPixel.h"
-#include "Arduino.h"
+
+#include "../StandardCplusplus-master/StandardCplusplus.h"
+#include "../StandardCplusplus-master/set"
+#include "../StandardCplusplus-master/iterator"
 
 //max color value
 const int MAX_RING_SPEED = 255;
@@ -49,6 +53,16 @@ public:
 	void toggleSpin();	
 	
 	/**
+		Turn on the light at this absolute index, and add it to the tracking set
+	*/
+	void turnOnAbsolute(uint16_t index);
+	
+	/**
+		Turn off the light at this absolute index, and add it to the tracking set
+	*/
+	void turnOffAbsolute(uint16_t index);
+	
+	/**
 		update the ring, must be called every loop for best accuracy
 		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
 	*/
@@ -66,6 +80,7 @@ private:
 	bool* lightActiveStatusAbsolute;
 	// array of custom NeoPixel- one for each in ring
 	NeoPixel* pixels;
+	std::set<int> lightsChangedSinceLastUpdate;
 	
 	/* 
 		tracks the current offset of the lights from their absolute indices, 
