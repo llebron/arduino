@@ -76,18 +76,21 @@ void NeoPixelRing::updateBlinkingPixels(long currTime) {
     	uint16_t blinkingPixelStartingIndex = *it;
     	NeoPixel blinkingPixel = pixels[blinkingPixelStartingIndex];
     	bool pixelBlinked = blinkingPixel.updateBlink(currTime);
-    	// if the pixel blinks this update, add it to the tracking set
+    	
+    	// if the pixel blinks this update, AND the ringIndex is active, add it to the tracking set
     	if (pixelBlinked) {
-    		uint16_t currentIndexForPixel = getCurrentIndexFromStartingIndex(blinkingPixelStartingIndex);
-    		ringIndicesChangedSinceLastUpdate.insert(currentIndexForPixel);
+    		uint16_t ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
+    		if (ringIndexActiveStatus[ringIndexForPixel]) {
+    			ringIndicesChangedSinceLastUpdate.insert(ringIndexForPixel);
+    		}
     	}
   	}
 }
 
 void NeoPixelRing::updateRingIndex(uint16_t ringIndex) {
-	// get the starting index of the pixel currently at this index to access its state
-	uint16_t startingIndexOfCurrentPixel = getStartingIndexFromCurrentIndex(ringIndex);
-	NeoPixel pixel = pixels[startingIndexOfCurrentPixel];
+	// get the starting index of the pixel at this index to access its state
+	uint16_t startingIndexOfPixel = getStartingIndexFromRingIndex(ringIndex);
+	NeoPixel pixel = pixels[startingIndexOfPixel];
 	
 	// Is the light on  both in absolute terms and relative to its blink cycle?
 	bool isOn = ringIndexActiveStatus[ringIndex] && pixel.isBlinkOn();
@@ -126,6 +129,21 @@ void NeoPixelRing::turnOffRingIndex(uint16_t index) {
 	}
 	ringIndexActiveStatus[index] = false;
 	ringIndicesChangedSinceLastUpdate.insert(index);
+}
+
+
+void NeoPixelRing::blinkRingIndex(uint16_t index, long blinkLength) {
+	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+	NeoPixel pixel = pixels[startingIndexForRingIndex];
+	pixel.blink(blinkLength);	
+	blinkingPixels.insert(startingIndexForRingIndex);
+}
+
+void NeoPixelRing::stopBlinkRingIndex(uint16_t index) {
+	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+	NeoPixel pixel = pixels[startingIndexForRingIndex];
+	pixel.stopBlink();	
+	blinkingPixels.erase(startingIndexForRingIndex);
 }
 
 void NeoPixelRing::spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin) {
@@ -174,11 +192,11 @@ bool NeoPixelRing::updateSpinOffset(long currTime) {
 	return incrementSpin;
 }
 
-uint16_t NeoPixelRing::getCurrentIndexFromStartingIndex(uint16_t index) {
+uint16_t NeoPixelRing::getRingIndexFromStartingIndex(uint16_t index) {
 	return getWrappedIndex(index + spinOffset);
 }
 
-uint16_t NeoPixelRing::getStartingIndexFromCurrentIndex(uint16_t index) {
+uint16_t NeoPixelRing::getStartingIndexFromRingIndex(uint16_t index) {
 	return getWrappedIndex(index - spinOffset);
 }
 

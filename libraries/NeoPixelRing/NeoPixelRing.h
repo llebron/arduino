@@ -5,7 +5,7 @@ Larry LeBron
 A library wrapping Adafruit's Neopixel library, with some functionality specific to their ring
 e.g. spinning, blinking, setting clusters of lights
 References to the starting indices of the pixels are tagged with starting
-References to the current indices of the pixels (relative to the current spin offset) are tagged with current
+References to the ring indices of the pixels (relative to the current spin offset) are tagged with ringIndex
 */
 
 #ifndef NEOPIXELRING_H
@@ -63,6 +63,16 @@ public:
 	void turnOffRingIndex(uint16_t index);
 	
 	/**
+		blink the pixel at this ring index with this blinkLength
+	*/
+	void blinkRingIndex(uint16_t index, long blinkLength);
+	
+	/**
+		stop blinking the pixel at this ring index
+	*/
+	void stopBlinkRingIndex(uint16_t index);
+	
+	/**
 		update the ring, must be called every loop for best accuracy
 		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
 	*/
@@ -113,9 +123,9 @@ private:
 	// tracking last time spin was incremented
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
-	// utilities for converting between current and absolute indices
-	uint16_t getCurrentIndexFromStartingIndex(uint16_t index);
-	uint16_t getStartingIndexFromCurrentIndex(uint16_t index);
+	// utilities for converting between ring (current) and starting indices
+	uint16_t getRingIndexFromStartingIndex(uint16_t index);
+	uint16_t getStartingIndexFromRingIndex(uint16_t index);
 	uint16_t getWrappedIndex(uint16_t index);
 };
 

@@ -16,6 +16,7 @@ bool NeoPixel::updateBlink(long currTime) {
 }
 
 // blink the pixel - it'll toggle between on/off after blinkLength (ms)
+// DOES NOT alter blinkToggleTime so that blink rate can be fluidly increased/decreased without losing past state
 // management of tracking which lights are blinking is handled in NeoPixelRing
 void NeoPixel::blink(long arg_blinkLength) {
 	blinkLength = arg_blinkLength;
