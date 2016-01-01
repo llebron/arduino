@@ -15,6 +15,19 @@ bool NeoPixel::updateBlink(long currTime) {
 	return false;
 }
 
+// blink the pixel - it'll toggle between on/off after blinkLength (ms)
+// management of tracking which lights are blinking is handled in NeoPixelRing
+void NeoPixel::blink(long arg_blinkLength) {
+	blinkLength = arg_blinkLength;
+}
+
+// stop the blinking - sets _isBlinkOn to true, 
+// so "absolute" on/off can be managed by NeoPixelRing
+// management of tracking which lights are blinking is handled in NeoPixelRing
+void NeoPixel::stopBlink() {
+	_isBlinkOn = true;
+}
+
 bool NeoPixel::isBlinkOn() {
 	return _isBlinkOn;
 }

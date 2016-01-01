@@ -22,16 +22,19 @@ public:
 		update the pixel, must be called every loop for best accuracy with blink tracking
 		returns true if the value of isBlinkOn() changes
 	*/
-	bool updateBlink(long currrTime);	
+	bool updateBlink(long currTime);	
 	
 	/**
 		Is the light on in its blink cycle?
 	*/
 	bool isBlinkOn();
 	
-	// blink(onOffDuration)
+	// blink the pixel - it'll toggle between on/off after blinkLength (ms)
+	void blink(long arg_blinkLength);
 	
-	// stopBlink() - should set light to on - absolute light on/off is managed by the ring class
+	// stop the blinking - sets _isBlinkOn to true, 
+	// so "absolute" on/off can be managed by NeoPixelRing
+	void stopBlink();
 	
 	// set brightness percent from 0 <-> 1
 	void setBrightnessPercent(float arg_brightnessPercent);
@@ -55,8 +58,10 @@ private:
 	uint8_t blue = MAX_COLOR_VAL;
 	
 	// blinking logic - whether or not light is blinking is tracked by the NeoPixelRing
-	long blinkToggleTime = 0; //how long has blink been in its current state
-	long blinkLength = 0; // how long is on/off
+	// when did blink last toggle
+	long blinkToggleTime = millis();
+	// how long is blink on/off
+	long blinkLength = 0; 
 };
 
 #endif
