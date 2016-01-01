@@ -1,5 +1,6 @@
 // have to include libraries referenced within libraries in the sketch as well!
 #include <Adafruit_NeoPixel.h>
+#include <math.h>
 #include <NeoPixel.h>
 #include <StandardCplusplus.h>
 #include <set>

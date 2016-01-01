@@ -19,7 +19,13 @@ NeoPixelRing::NeoPixelRing(uint16_t arg_size, uint8_t pin) {
 	ring.setPin(pin);
 	lightActiveStatusAbsolute = new bool[size]{true}; 
 	pixels = new NeoPixel[size];
+
+	// prepares the arduino output to the ring for communication
+	ring.begin();
+	
 	// should iterate through and turn everything on - maybe start with random?
+	// "draw" any changes set here
+	ring.show();
 }
 
 NeoPixelRing::~NeoPixelRing() {
@@ -30,25 +36,26 @@ NeoPixelRing::~NeoPixelRing() {
 void NeoPixelRing::update() {
 	long currTime = millis();
 	bool isRefreshRing = false;
+	bool updateAll = false;
 	
 	// process the spin offset first, so values will be processed accurately
 	if (isSpinning) {
-		isRefreshRing = updateSpinOffset(currTime);
+		updateAll = updateSpinOffset(currTime);
 	}
 	
 	// process any lights that are actively blinking
 	
 	// Need to refresh the ring if there are any changed lights
-	isRefreshRing |= !lightsChangedSinceLastUpdate.empty();
-	
-	// series of isRefreshRing |= methodThatIndicatesRefreshRing (e.g. blink, switches, etc)
-	
-	// process any lights that are actively blinking
+	isRefreshRing = updateAll || !lightsChangedSinceLastUpdate.empty();
 	
 	// if isRefreshRing, change the lights and call show()
 	if (isRefreshRing) {
-		 // incrementing spin means updating every light regardless of other changes
-		 
+		 // if updateAll - go through all indices	
+		 if (updateAll) {
+		 	for (int i=0; i<size; i++) {
+		 		
+		 	}
+		 }	 
 		 // otherwise, go through the lightsChangedSinceLastUpdate, updating the ring
 
 		 // on/off & blink: just the lights that are actually turning from on <-> off
@@ -56,6 +63,9 @@ void NeoPixelRing::update() {
 		 
 		 // color: just the lights with colors changing
 		 // brightness: just the lights with the brightness changing
+		 
+		 // draw the changes
+		 ring.show();
 	}
 	
 	// clear the change tracking set
