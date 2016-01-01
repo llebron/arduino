@@ -66,12 +66,12 @@ public:
 	void toggleSpin();	
 	
 	/**
-		Turn on the this ring index, and add it to the tracking set
+		Turn on the this ring index
 	*/
 	void turnOnRingIndex(uint16_t index);
 	
 	/**
-		Turn off this ring index, and add it to the tracking set
+		Turn off this ring index
 	*/
 	void turnOffRingIndex(uint16_t index);
 	
@@ -84,6 +84,11 @@ public:
 		stop blinking the pixel at this ring index
 	*/
 	void stopBlinkRingIndex(uint16_t index);
+	
+	// Set a color for a ring index
+	void setRedRingIndex(uint16_t index, uint8_t red);
+	void setGreenRingIndex(uint16_t index, uint8_t green);
+	void setBlueRingIndex(uint16_t index, uint8_t blue);
 	
 	/**
 		update the ring, must be called every loop for best accuracy

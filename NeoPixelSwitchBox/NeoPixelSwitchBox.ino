@@ -45,7 +45,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   // first, update all inputs - switches, knobs, etc - 
   updateComponents();
   
