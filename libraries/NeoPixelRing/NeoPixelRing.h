@@ -11,7 +11,6 @@ References to the ring indices of the pixels (relative to the current spin offse
 /*
 TODO:
 Put to sleep if no activity over time
-Set brightness
 
 Random
 Rainbow
@@ -65,33 +64,41 @@ public:
 	void toggleSpin();	
 	
 	/**
-		Turn on the this ring index
+		Turn on the this ring index or indices
 	*/
 	void turnOnRingIndex(uint16_t index);
+	void turnOnRingIndices(std::set<uint16_t> indices);
 	
 	/**
-		Turn off this ring index
+		Turn off this ring index or indices
 	*/
 	void turnOffRingIndex(uint16_t index);
+	void turnOffRingIndices(std::set<uint16_t> indices);
+
+	// Set a color for a ring index or indices
+	void setRedRingIndex(uint16_t index, uint8_t red);
+	void setRedRingIndices(std::set<uint16_t> indices, uint8_t red);
+	void setGreenRingIndex(uint16_t index, uint8_t green);
+	void setGreenRingIndices(std::set<uint16_t> indices, uint8_t green);
+	void setBlueRingIndex(uint16_t index, uint8_t blue);
+	void setBlueRingIndices(std::set<uint16_t> indices, uint8_t blue);
+	
+	// Set a brightness percent for a ring index or indices
+	void setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent);
+	void setBrightnessPercentRingIndices(std::set<uint16_t> indices, float brightnessPercent);
 	
 	/**
-		blink the pixel at this ring index with this blinkLength
+		blink the pixel(s) at this ring index or indices with this blinkLength
 	*/
 	void blinkRingIndex(uint16_t index, long blinkLength);
+	void blinkRingIndices(std::set<uint16_t> indices, long blinkLength);
 	
 	/**
-		stop blinking the pixel at this ring index
+		stop blinking the pixel(s) at this ring index or indices
 	*/
 	void stopBlinkRingIndex(uint16_t index);
-	
-	// Set a color for a ring index
-	void setRedRingIndex(uint16_t index, uint8_t red);
-	void setGreenRingIndex(uint16_t index, uint8_t green);
-	void setBlueRingIndex(uint16_t index, uint8_t blue);
-	
-	// Set a brightness percent for a ring index
-	void setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent);
-	
+	void stopBlinkRingIndices(std::set<uint16_t> indices);	
+		
 	/**
 		update the ring, must be called every loop for best accuracy
 		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
