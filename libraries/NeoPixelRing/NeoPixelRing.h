@@ -14,7 +14,6 @@ Put to sleep if no activity over time
 
 Random
 Rainbow
-Arrays or Vectors of indices
 
 Nice to have: accel/decel for spin
 */
@@ -32,8 +31,9 @@ Nice to have: accel/decel for spin
 #include "../StandardCplusplus-master/set"
 #include "../StandardCplusplus-master/iterator"
 
-//max color value
-const int MAX_RING_SPEED = 255;
+// Maximums used by randomize()
+const int MAX_RANDOM_SPIN_INCREMENT_DURATION = 3000;
+const int MAX_RANDOM_BLINK_LENGTH = 5000;
 
 // spinIncrementDuration flag used to stop the spin
 const long STOP_SPIN_INCREMENT_DURATION = -1;
@@ -50,18 +50,10 @@ public:
 	~NeoPixelRing();
 	
 	/**
-		spin the wheel
-		arg_spinIncrementDuration: how long to wait between spin increments in ms
-		arg_isClockwiseSpin: true if spinning clockwise, otherwise counter clockwise
-		If this is called with STOP_SPIN_INCREMENT_DURATION (-1), will stop the spin
+		update the ring, must be called every loop for best accuracy
+		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
 	*/
-	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
-	
-	/**
-		start/stop the spin, using the current spinIncrementDuration and direction
-		Will not start the spin if the increment time is set to STOP_SPIN_INCREMENT_DURATION
-	*/
-	void toggleSpin();	
+	void update();	
 	
 	/**
 		Turn on the this ring index or indices
@@ -100,10 +92,25 @@ public:
 	void stopBlinkRingIndices(std::set<uint16_t> indices);	
 		
 	/**
-		update the ring, must be called every loop for best accuracy
-		N.B. Call after updating any ring state - e.g. on/off, blink, brightness, color, spin
+		spin the wheel
+		arg_spinIncrementDuration: how long to wait between spin increments in ms
+		arg_isClockwiseSpin: true if spinning clockwise, otherwise counter clockwise
+		If this is called with STOP_SPIN_INCREMENT_DURATION (-1), will stop the spin
 	*/
-	void update();	
+	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
+	
+	/**
+		start/stop the spin, using the current spinIncrementDuration and direction
+		Will not start the spin if the increment time is set to STOP_SPIN_INCREMENT_DURATION
+	*/
+	void toggleSpin();	
+	
+	/**
+		Set all pixels to random colors, brightness and blink rate
+		Set ring to random spin
+		DOES NOT affect the ring index active statuses, which are controlled switches 
+	*/
+	void randomize();
 	
 	
 private:

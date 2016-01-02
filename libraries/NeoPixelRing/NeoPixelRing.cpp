@@ -243,6 +243,43 @@ bool NeoPixelRing::updateSpinOffset(long currTime) {
 	return incrementSpin;
 }
 
+void NeoPixelRing::randomize() {
+	// set per-pixel values
+	for (uint16_t i = 0; i < size; i++) {
+		// random color
+		uint8_t r = random(MAX_COLOR_VAL+1);
+		uint8_t g = random(MAX_COLOR_VAL+1);
+		uint8_t b = random(MAX_COLOR_VAL+1);
+		setRedRingIndex(i, r);
+		setGreenRingIndex(i, g);
+		setBlueRingIndex(i, b);		
+		
+		// random brightness
+		float brightnessPercent = random(101) / 100.0;
+		setBrightnessPercentRingIndex(i, brightnessPercent);
+		
+		// random blink
+		int blinkChance = random(1, 6);
+		int isBlink = random(blinkChance) == 0;
+		if (isBlink) {
+			long blinkLength = random(MAX_RANDOM_BLINK_LENGTH+1);
+			blinkRingIndex(i, blinkLength);
+		} else {
+			stopBlinkRingIndex(i);
+		}
+	}
+	
+	// random spin
+	int isSpin = random(2) == 0;
+	if (isSpin) {
+		long spinIncrementDuration = random(MAX_RANDOM_SPIN_INCREMENT_DURATION+1);
+		bool isClockwise = random(2) == 0;
+		spin(spinIncrementDuration, isClockwise);
+	} else {
+		isSpinning = false;
+	}
+}
+
 NeoPixel NeoPixelRing::getPixelAtRingIndex(uint16_t index) {
 	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	return pixels[startingIndexForRingIndex];

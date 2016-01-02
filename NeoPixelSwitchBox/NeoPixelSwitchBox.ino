@@ -1,3 +1,5 @@
+#include <Switch.h>
+
 // have to include libraries referenced within libraries in the sketch as well!
 #include <Adafruit_NeoPixel.h>
 #include <math.h>
@@ -6,8 +8,13 @@
 #include <set>
 #include <iterator>
 
+
 #include <NeoPixelRing.h>
 
+bool seededRand = false;
+
+//button on pin 0, debounce 30 ms
+Switch randomButton(0, 30);
 
 /* 
   initialize the ring
@@ -59,7 +66,20 @@ void updateComponents() {
   // update blink and brightness sliders
   // update switches and other buttons
   
-  
+  // update the status of all switches/buttons - might be worth putting them in an array to make it an easy loop
+  updateRandomButton();
+}
+
+void updateRandomButton() {
+   randomButton.update();
+   if (randomButton.closedThisUpdate()) {
+     // if this is the first time the random button is closed, seed the random number generator with the time the program's been running - will vary from run to run
+     if (!seededRand) {
+       randomSeed(millis());
+       seededRand = true;
+     }
+     ring.randomize();
+   }
 }
 
 
