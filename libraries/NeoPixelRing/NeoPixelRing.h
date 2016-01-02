@@ -90,7 +90,7 @@ public:
 	void setBlueRingIndex(uint16_t index, uint8_t blue);
 	
 	// Set a brightness percent for a ring index
-	void setBrightnessPercentRingIndex(uint16_t index, long blinkLength);
+	void setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent);
 	
 	/**
 		update the ring, must be called every loop for best accuracy
@@ -144,7 +144,7 @@ private:
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
 	// utilities for converting between ring (current) and starting indices
-	NeoPixel getPixelAtRingIndex((uint16_t index);
+	NeoPixel getPixelAtRingIndex(uint16_t index);
 	uint16_t getRingIndexFromStartingIndex(uint16_t index);
 	uint16_t getStartingIndexFromRingIndex(uint16_t index);
 	uint16_t getWrappedIndex(uint16_t index);

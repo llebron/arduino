@@ -136,15 +136,22 @@ void NeoPixelRing::setBlueRingIndex(uint16_t index, uint8_t blue) {
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
 
+void NeoPixelRing::setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent) {
+	NeoPixel pixel = getPixelAtRingIndex(index);
+	pixel.setBrightnessPercent(brightnessPercent);
+	ringIndicesChangedSinceLastUpdate.insert(index);
+}
 
 void NeoPixelRing::blinkRingIndex(uint16_t index, long blinkLength) {
-	NeoPixel pixel = getPixelAtRingIndex(index);
+	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+	NeoPixel pixel = pixels[startingIndexForRingIndex];
 	pixel.blink(blinkLength);	
 	blinkingPixels.insert(startingIndexForRingIndex);
 }
 
 void NeoPixelRing::stopBlinkRingIndex(uint16_t index) {
-	NeoPixel pixel = getPixelAtRingIndex(index);
+	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+	NeoPixel pixel = pixels[startingIndexForRingIndex];
 	pixel.stopBlink();	
 	blinkingPixels.erase(startingIndexForRingIndex);
 }
