@@ -12,7 +12,6 @@ References to the ring indices of the pixels (relative to the current spin offse
 TODO:
 Put to sleep if no activity over time
 
-Random
 Rainbow
 
 Nice to have: accel/decel for spin
@@ -39,6 +38,36 @@ const int MAX_RANDOM_BLINK_LENGTH = 5000;
 const long STOP_SPIN_INCREMENT_DURATION = -1;
 // lastSpinIncrementTime flag used to guarantee the next update will increment the offset
 const long INCREMENT_SPIN_AT_NEXT_UPDATE = LONG_MIN;
+
+// fixed array for range for Red->Orange->Yellow->Green->Blue->Indigo->Violet
+// hard-coded for a 24-index ring
+const uint8_t rainbowColors[] = 
+{
+	255,	0,		0,
+	255,	41,		0,
+	255,	83,		0,
+	255,	124,	0,
+	255,	165,	0,
+	255,	195,	0,
+	255,	225,	0,
+	255,	255,	0,
+	191,	223,	0,
+	128,	192,	0,
+	64,		160,	0,
+	0,		128,	0,
+	0,		96,		64,
+	0,		64,		128,
+	0,		32,		191,
+	0,		0,		255,
+	19,		0,		224,
+	38,		0,		193,
+	56,		0,		161,
+	75,		0,		130,
+	116,	33,		157,
+	157,	66,		184,
+	197,	98,		211,
+	238,	130,	238
+};
 
 class NeoPixelRing {
 public:
@@ -111,6 +140,11 @@ public:
 		DOES NOT affect the ring index active statuses, which are controlled switches 
 	*/
 	void randomize();
+	
+	/** 
+		Set the ring colors to a rainbow, max brightness and stops all blinking
+	*/
+	void rainbow();
 	
 	
 private:

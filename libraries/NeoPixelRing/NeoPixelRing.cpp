@@ -280,6 +280,27 @@ void NeoPixelRing::randomize() {
 	}
 }
 
+void NeoPixelRing::rainbow() {
+	// hard-coded to 24 index ring - 
+	// general solution to the rainbow color transition needed for other sizes
+	if (size != 24) {
+		return;
+	}
+	
+	for (int i=0; i < size; i++) {
+		uint8_t r = rainbowColors[i*3];
+		uint8_t g = rainbowColors[i*3+1];
+		uint8_t b = rainbowColors[i*3+2];
+		
+		setRedRingIndex(i, r);
+		setGreenRingIndex(i, g);
+		setBlueRingIndex(i, b);
+		
+		setBrightnessPercentRingIndex(i,1);
+		stopBlinkRingIndex(i);
+	}
+}
+
 NeoPixel NeoPixelRing::getPixelAtRingIndex(uint16_t index) {
 	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	return pixels[startingIndexForRingIndex];
