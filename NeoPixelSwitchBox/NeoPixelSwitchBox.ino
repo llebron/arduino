@@ -1,3 +1,5 @@
+#include <Potentiometer.h>
+
 #include <Switch.h>
 
 // have to include libraries referenced within libraries in the sketch as well!
@@ -15,6 +17,11 @@ bool seededRand = false;
 
 //button on pin 0, debounce 30 ms
 Switch randomButton(0, 30);
+
+// test pot
+Potentiometer pot(A0);
+
+
 
 /* 
   initialize the ring
@@ -59,7 +66,7 @@ void loop() {
   //delay(1000);
   //ring.randomize();
   // first, update all inputs - switches, knobs, etc - 
-  // updateComponents();
+  updateComponents();
   
   // Finally, update the ring itself, which should now have all current state, and will be able to determine if it needs to refresh
   ring.update();
@@ -67,6 +74,10 @@ void loop() {
 }
 
 void updateComponents() {
+  pot.update();
+  if (pot.valChangedThisUpdate()) {
+    Serial.print("pot changed to: "); Serial.println(pot.getPercentVal());
+  }
   // update spin pot - ideally have a library for this, like switch - which tells me if it's changed in a meaningful way - if it has, call spin()
   // update light knobs
   // update blink and brightness sliders
