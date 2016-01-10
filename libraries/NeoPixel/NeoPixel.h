@@ -17,6 +17,8 @@ const int MAX_COLOR_VAL = 255;
 
 class NeoPixel {
 public:
+
+	NeoPixel(uint8_t arg_startingIndex);
 	
 	/**
 		update the pixel, must be called every loop for best accuracy with blink tracking
@@ -50,6 +52,9 @@ public:
 	
 	
 private:
+
+	uint8_t startingIndex;
+		
 	// is the light on in its current blink cycle
 	bool _isBlinkOn = true;
 	

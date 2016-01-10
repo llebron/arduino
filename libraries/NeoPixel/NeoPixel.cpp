@@ -1,5 +1,9 @@
 #include "NeoPixel.h"
 
+NeoPixel::NeoPixel(uint8_t arg_startingIndex) {
+	startingIndex = arg_startingIndex;
+}
+
 void NeoPixel::setRed(uint8_t r) {
 	red = getCappedColorValue(r);
 }

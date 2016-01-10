@@ -11,6 +11,7 @@ References to the ring indices of the pixels (relative to the current spin offse
 /*
 TODO:
 Put to sleep if no activity over time
+init?
 
 Rainbow
 
@@ -146,12 +147,14 @@ public:
 	*/
 	void rainbow();
 	
+	void demo();
+	
 	
 private:
 	// the neopixel ring - library defined by Adafruit
-	Adafruit_NeoPixel ring;	
+	Adafruit_NeoPixel* ring;	
 	// array of custom NeoPixel- one for each in ring - allows reference to pixels by starting index
-	NeoPixel* pixels;
+	NeoPixel** pixels;
 	// the size of the ring
 	uint16_t size;
 	// the max index of the ring
@@ -175,6 +178,9 @@ private:
 	*/
 	void updateRingIndex(uint16_t ringIndex); //Unsure of which way to go so far on this
 	
+	// diagnostic method to print the current state of the ring indices
+	void printRingIndexActive();
+	
 	/* 
 		tracks the current offset of the lights from their absolute indices, 
 		altered as the ring spins
@@ -192,7 +198,7 @@ private:
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
 	// utilities for converting between ring (current) and starting indices
-	NeoPixel getPixelAtRingIndex(uint16_t index);
+	NeoPixel* getPixelAtRingIndex(uint16_t index);
 	uint16_t getRingIndexFromStartingIndex(uint16_t index);
 	uint16_t getStartingIndexFromRingIndex(uint16_t index);
 	uint16_t getWrappedIndex(uint16_t index);

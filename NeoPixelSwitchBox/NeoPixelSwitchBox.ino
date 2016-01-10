@@ -47,13 +47,19 @@ Switch randomButton(0, 30);
 NeoPixelRing ring(24, 7);
   
 void setup() {
-
-
+  Serial.begin(9600);  
+  Serial.println("--- Start Serial Monitor ");
+  // stand-in for initialization
+  // ring.rainbow();
+  ring.demo();
 }
 
 void loop() {
+  
+  //delay(1000);
+  //ring.randomize();
   // first, update all inputs - switches, knobs, etc - 
-  updateComponents();
+  // updateComponents();
   
   // Finally, update the ring itself, which should now have all current state, and will be able to determine if it needs to refresh
   ring.update();
