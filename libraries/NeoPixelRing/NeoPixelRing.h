@@ -128,6 +128,12 @@ public:
 	*/
 	void spin(long arg_spinIncrementDuration, boolean arg_isClockwiseSpin);
 	
+	/** 
+		spin the wheel by amt
+		positive is clockwise
+		negative is counter clockwise
+	*/
+	
 	/**
 		start/stop the spin, using the current spinIncrementDuration and direction
 		Will not start the spin if the increment time is set to STOP_SPIN_INCREMENT_DURATION
@@ -146,6 +152,14 @@ public:
 	*/
 	void rainbow();
 	
+	/**
+		Adjust the spin offset by amt
+		Positive is clockwise
+		Negative is counter clockwise
+	*/
+	void adjustSpinOffset(int amt);
+	
+	// trash this when done testing
 	void demo();
 	
 	
@@ -188,10 +202,6 @@ private:
 	*/
 	uint16_t spinOffset = 0;
 	void updateSpinOffset(long currTime);
-	/**
-		Helper method to adjust spin offset by amt
-	*/
-	void adjustSpinOffset(int amt);
 
 	// is the ring spinning?
 	bool isSpinning = false;
