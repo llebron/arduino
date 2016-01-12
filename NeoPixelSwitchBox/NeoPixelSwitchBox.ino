@@ -39,10 +39,10 @@ Potentiometer pot(A0);
     blink()
     toggleOnOff()
     setColor()
-    // For my "random" and "rainbow" functionality, how do I interface with the light clusters?
-
-   
-  initialize the switches/buttons - do I want to add a notion of "momentary" to the switch class for handling buttons?
+    
+  initialize the switches/buttons 
+  initialize pots
+  - guess I should just set everything based on the hardware to start
   
   SPIN
   Set up knob to have guarantee it's possible to stop the spin in the center of the knob - maybe with a detent?
@@ -78,7 +78,7 @@ void updateComponents() {
   if (pot.valChangedThisUpdate()) {
     Serial.print("pot changed to: "); Serial.println(pot.getPercentVal());
   }
-  // update spin pot - ideally have a library for this, like switch - which tells me if it's changed in a meaningful way - if it has, call spin()
+  // update spin pot - if it has changed, call spin()
   // update light knobs
   // update blink and brightness sliders
   // update switches and other buttons

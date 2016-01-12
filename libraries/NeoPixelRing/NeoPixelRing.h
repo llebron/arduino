@@ -11,9 +11,8 @@ References to the ring indices of the pixels (relative to the current spin offse
 /*
 TODO:
 Put to sleep if no activity over time
-init?
-
-Rainbow
+init - seems like pin vals aren't reliable until after setup - maybe just not until after setup?
+forward/back for spin
 
 Nice to have: accel/decel for spin
 */
@@ -164,6 +163,7 @@ private:
 	bool* ringIndexActiveStatus;
 	// tracking set for ring indices changed 
 	std::set<uint16_t> ringIndicesChangedSinceLastUpdate;
+	bool updateAll = false;
 	
 	
 	// tracking set for blinking pixels - stores the pixel's starting index
@@ -181,13 +181,18 @@ private:
 	// diagnostic method to print the current state of the ring indices
 	void printRingIndexActive();
 	
+
 	/* 
 		tracks the current offset of the lights from their absolute indices, 
 		altered as the ring spins
 	*/
-	// update the spin, returns true if spin offset was actually altered, meaning the ring needs to be refreshed
-	bool updateSpinOffset(long currTime);
 	uint16_t spinOffset = 0;
+	void updateSpinOffset(long currTime);
+	/**
+		Helper method to adjust spin offset by amt
+	*/
+	void adjustSpinOffset(int amt);
+
 	// is the ring spinning?
 	bool isSpinning = false;
 	// how long between spin increments - initialized to the "null" duration

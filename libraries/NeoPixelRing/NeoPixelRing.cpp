@@ -46,12 +46,14 @@ void NeoPixelRing::printRingIndexActive() {
 
 
 void NeoPixelRing::update() {
+
 	long currTime = millis();
 	bool isRefreshRing = false;
-	bool spinOffsetChanged = false;
+	
 	// process the spin offset first, so values will be processed accurately
 	if (isSpinning) {
-		spinOffsetChanged = updateSpinOffset(currTime);
+		// if offset changes, updateAll flag will be set true
+		updateSpinOffset(currTime);
 	}
 	
 	// process any lights that are actively blinking - if any lights toggle blink value
@@ -59,12 +61,12 @@ void NeoPixelRing::update() {
 	updateBlinkingPixels(currTime);
 	
 	// Need to refresh the ring if there are any changed lights
-	isRefreshRing = spinOffsetChanged || !ringIndicesChangedSinceLastUpdate.empty();
+	isRefreshRing = updateAll || !ringIndicesChangedSinceLastUpdate.empty();
 	
 	// if isRefreshRing, change the lights and call show()
 	if (isRefreshRing) {
-		 if (spinOffsetChanged) {
-		 	// if spin offset updated - go through all ring indices	
+		 if (updateAll) {
+		 	// if updateAll - go through all ring indices	
 		 	for (uint16_t i=0; i<size; i++) {
 		 		updateRingIndex(i);
 		 	}
@@ -79,8 +81,9 @@ void NeoPixelRing::update() {
 		 // draw the changes
 		 ring->show();
 		 
-		// clear the change tracking set
+		// clear the change tracking set and updateAll flag
 		ringIndicesChangedSinceLastUpdate.clear();
+		updateAll = false;
 	}
 }
 
@@ -249,7 +252,7 @@ void NeoPixelRing::toggleSpin() {
 	}
 }
 
-bool NeoPixelRing::updateSpinOffset(long currTime) {
+void NeoPixelRing::updateSpinOffset(long currTime) {
 	bool incrementSpin = (lastSpinIncrementTime == INCREMENT_SPIN_AT_NEXT_UPDATE) ||
 							(currTime - lastSpinIncrementTime) >= spinIncrementDuration;
 	
@@ -257,16 +260,27 @@ bool NeoPixelRing::updateSpinOffset(long currTime) {
 	// or if enough time has passed increment the spin offset
 	if (incrementSpin) {
 		if (isClockwiseSpin) {
-			spinOffset++;
+			adjustSpinOffset(1);
 		} else {
-			spinOffset--;
+			adjustSpinOffset(-1);
 		}
-		// modulo size to keep the spin offset within simple bounds (-maxIndex, maxIndex)
-		spinOffset = spinOffset % size;
-		lastSpinIncrementTime = millis();
 	}
-	return incrementSpin;
 }
+
+/**
+	Adjust the spin offset by amt
+*/
+void NeoPixelRing::adjustSpinOffset(int amt) {
+	spinOffset += amt;
+	// modulo size to keep the spin offset within simple bounds (-maxIndex, maxIndex)
+	spinOffset = spinOffset % size;
+	lastSpinIncrementTime = millis();
+	
+	// set flag that everything now needs to be updated
+	updateAll = true;
+}
+
+
 
 void NeoPixelRing::randomize() {
 	// set per-pixel values
