@@ -24,25 +24,11 @@ Potentiometer pot(A0);
 
 
 /* 
-  initialize the ring
-    What pin is it on?
-    Function to turn on/off a group of indices together - could be handled by NeoPixelLightCluster
-    randomAll()
-    rainbow()
-    spin() - set spin speed - (-100, +100), % of max - needs to operate on the individual light level
-    update() - poll and update all lights
   
-  Make my "lights" (NeoPixelLight)
-    What indices does it control?
-    Specify indices 
-    brightness()
-    blink()
-    toggleOnOff()
-    setColor()
-    
   initialize the switches/buttons 
   initialize pots
   - guess I should just set everything based on the hardware to start
+  or - start with defaults and then update state once there's a change - might be trickier than it's worth
   
   SPIN
   Set up knob to have guarantee it's possible to stop the spin in the center of the knob - maybe with a detent?
