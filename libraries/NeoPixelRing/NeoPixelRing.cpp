@@ -7,7 +7,7 @@ NeoPixelRing::NeoPixelRing(uint16_t arg_size, uint8_t pin) {
 	ringIndexActiveStatus = new bool[size]; 
 	pixels = new NeoPixel*[size];
 	for (int i=0; i < size; i++) {
-		ringIndexActiveStatus[i] = true;
+		ringIndexActiveStatus[i] = true; // should be set by the current state of the switches
 		pixels[i] = new NeoPixel(i);
 	}
 	ring->begin();
@@ -20,22 +20,6 @@ NeoPixelRing::~NeoPixelRing() {
 	}
 	delete[] pixels;
 	delete ring;
-}
-
-void NeoPixelRing::demo() {
-	/*for(int i=0;i<size;i++){
-
-		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-		ring->setPixelColor(i, 0,75,0); // Moderately bright green color.
-
-		ring->show(); // This sends the updated pixel color to the hardware.
-
-		delay(500); // Delay for a period of time (in milliseconds).
-	}*/
-	randomize();
-	//printRingIndexActive();
-	update();
-	//printRingIndexActive();
 }
 
 void NeoPixelRing::printRingIndexActive() {
@@ -271,9 +255,12 @@ void NeoPixelRing::updateSpinOffset(long currTime) {
 	Adjust the spin offset by amt
 */
 void NeoPixelRing::adjustSpinOffset(int amt) {
+	
 	spinOffset += amt;
-	// modulo size to keep the spin offset within simple bounds (-maxIndex, maxIndex)
-	spinOffset = spinOffset % size;
+	// keep the spin offset within simple bounds (-maxIndex, maxIndex)
+	if (abs(spinOffset) == size) {
+		spinOffset = 0;
+	}
 	lastSpinIncrementTime = millis();
 	
 	// set flag that everything now needs to be updated
@@ -345,11 +332,11 @@ NeoPixel* NeoPixelRing::getPixelAtRingIndex(uint16_t index) {
 	return pixels[startingIndexForRingIndex];
 }
 
-uint16_t NeoPixelRing::getRingIndexFromStartingIndex(uint16_t index) {
+uint16_t NeoPixelRing::getRingIndexFromStartingIndex(int index) {
 	return getWrappedIndex(index + spinOffset);
 }
 
-uint16_t NeoPixelRing::getStartingIndexFromRingIndex(uint16_t index) {
+uint16_t NeoPixelRing::getStartingIndexFromRingIndex(int index) {
 	return getWrappedIndex(index - spinOffset);
 }
 
@@ -357,8 +344,8 @@ uint16_t NeoPixelRing::getStartingIndexFromRingIndex(uint16_t index) {
 	Accepts any index value and calculates the proper value by "wrapping" it 
 	within the allowable bounds for the ring indices (0, size-1)
 */
-uint16_t NeoPixelRing::getWrappedIndex(uint16_t index)
-{
+uint16_t NeoPixelRing::getWrappedIndex(int index) {
+	
 	// accounts for negative values
 	if (index < 0)
         index += size * ((-index) / size + 1);

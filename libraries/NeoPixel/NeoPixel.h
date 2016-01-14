@@ -13,7 +13,9 @@ Designed to be accessed via the API provided by NeoPixelRing
 #include <math.h> 
 
 //max color value
-const int MAX_COLOR_VAL = 255;
+// const int MAX_COLOR_VAL = 255;
+// toning down overall brightness by setting color to be half max
+const int MAX_COLOR_VAL = 77;
 
 class NeoPixel {
 public:

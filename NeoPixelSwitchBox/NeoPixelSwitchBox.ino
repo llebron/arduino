@@ -43,8 +43,22 @@ void setup() {
   Serial.begin(9600);  
   Serial.println("--- Start Serial Monitor ");
   // stand-in for initialization
-  // ring.rainbow();
-  ring.demo();
+  
+  ring.randomize();
+  //ring.blinkRingIndex(0, 100);
+  ring.spin(1000, false);
+  /*for (int i =0; i < 24; i++) {
+   // if (i!=23 && i != 0 && i!=1 && i!=2 ) {
+   if (i != 0) {
+      ring.setBrightnessPercentRingIndex(i, 0);
+    }
+  }*/
+  
+  std::set<uint16_t> offLights;
+  offLights.insert(0);
+  offLights.insert(1);
+  offLights.insert(2);
+  //ring.turnOffRingIndices(offLights);
 }
 
 void loop() {

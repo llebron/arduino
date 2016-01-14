@@ -159,9 +159,6 @@ public:
 	*/
 	void adjustSpinOffset(int amt);
 	
-	// trash this when done testing
-	void demo();
-	
 	
 private:
 	// the neopixel ring - library defined by Adafruit
@@ -177,7 +174,9 @@ private:
 	bool* ringIndexActiveStatus;
 	// tracking set for ring indices changed 
 	std::set<uint16_t> ringIndicesChangedSinceLastUpdate;
-	bool updateAll = false;
+	
+	// initializing this to true to force an initial update
+	bool updateAll = true;
 	
 	
 	// tracking set for blinking pixels - stores the pixel's starting index
@@ -190,7 +189,7 @@ private:
 		Uses the ring index value for on/off and the information for 
 		the NeoPixel object currently at this index, compensating for spin offset
 	*/
-	void updateRingIndex(uint16_t ringIndex); //Unsure of which way to go so far on this
+	void updateRingIndex(uint16_t ringIndex);
 	
 	// diagnostic method to print the current state of the ring indices
 	void printRingIndexActive();
@@ -200,7 +199,7 @@ private:
 		tracks the current offset of the lights from their absolute indices, 
 		altered as the ring spins
 	*/
-	uint16_t spinOffset = 0;
+	int spinOffset = 0;
 	void updateSpinOffset(long currTime);
 
 	// is the ring spinning?
@@ -214,9 +213,9 @@ private:
 	
 	// utilities for converting between ring (current) and starting indices
 	NeoPixel* getPixelAtRingIndex(uint16_t index);
-	uint16_t getRingIndexFromStartingIndex(uint16_t index);
-	uint16_t getStartingIndexFromRingIndex(uint16_t index);
-	uint16_t getWrappedIndex(uint16_t index);
+	uint16_t getRingIndexFromStartingIndex(int index);
+	uint16_t getStartingIndexFromRingIndex(int index);
+	uint16_t getWrappedIndex(int index);
 	
 };
 
