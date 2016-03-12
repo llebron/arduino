@@ -16,8 +16,12 @@ Does not block the loop while waiting for your switch to settle
 
 class Switch {
 public:
-	//Initializes the switch and activates the internal pullup resistor
-	//sets the debounce delay
+	/*
+		Initializes the switch and activates the internal pullup resistor
+		Also sets the debounce delay. This isn't the entire debounce duration. 
+		Instead, this is the amount of time by which the reading is delayed every time
+		it toggles
+	*/
 	Switch(int newSwitchPin, int debDelay);
 	
 	//update the switch, must be called every loop for best accuracy
@@ -43,7 +47,8 @@ private:
 	int lastReading; //last switch reading
 	bool justClosed; //switch was closed this update
 	bool justOpened; //switch was opened this update
-	int debounceDelay; //time to wait for switch to stop bouncing
+	//time to wait for switch to stop bouncing. Increases wait by this amount every time switch value toggles
+	int debounceDelay; 
 };
 
 

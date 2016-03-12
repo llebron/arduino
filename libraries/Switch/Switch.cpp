@@ -5,10 +5,12 @@ Switch::Switch(int newSwitchPin, int debDelay) {
 	pinMode(switchPin, INPUT_PULLUP);//activate pullup resistor
 	toggleTime = -1;
 	debounceDelay = debDelay;
-	switchState = false;
-	justClosed = false;
-	justOpened =  false; //switch starts open
-	lastReading = HIGH; //pin will be high by default when switch is open
+	
+	lastReading = digitalRead(switchPin); // read current state
+	switchState = lastReading == LOW; //LOW means switch is closed
+	justClosed = switchState;
+	justOpened =  !switchState; 
+	
 }
 
 void Switch::update() {
