@@ -1,6 +1,6 @@
 #include "NeoPixelRing.h"
 
-NeoPixelRing::NeoPixelRing(uint16_t arg_size, uint8_t pin) {
+NeoPixelRing::NeoPixelRing(int arg_size, uint8_t pin) {
 	size = arg_size;
 	maxIndex = size-1;
 	ring = new Adafruit_NeoPixel(size, pin, NEO_GRB + NEO_KHZ800);
@@ -51,14 +51,14 @@ void NeoPixelRing::update() {
 	if (isRefreshRing) {
 		 if (updateAll) {
 		 	// if updateAll - go through all ring indices	
-		 	for (uint16_t i=0; i<size; i++) {
+		 	for (int i=0; i<size; i++) {
 		 		updateRingIndex(i);
 		 	}
 		 } else {
 		 	// go through only the ringIndicesChangedSinceLastUpdate, updating the ring
-		 	for (std::set<uint16_t>::iterator it=ringIndicesChangedSinceLastUpdate.begin(); it!=ringIndicesChangedSinceLastUpdate.end(); it++) {
-		 		uint16_t i = *it;
-    			updateRingIndex(*it);
+		 	for (std::set<int>::iterator it=ringIndicesChangedSinceLastUpdate.begin(); it!=ringIndicesChangedSinceLastUpdate.end(); it++) {
+		 		int index = *it;
+    			updateRingIndex(index);
   			}
 		 }
 		 
@@ -72,14 +72,14 @@ void NeoPixelRing::update() {
 }
 
 void NeoPixelRing::updateBlinkingPixels(long currTime) {
-	for (std::set<uint16_t>::iterator it=blinkingPixels.begin(); it!=blinkingPixels.end(); it++) {
-    	uint16_t blinkingPixelStartingIndex = *it;
+	for (std::set<int>::iterator it=blinkingPixels.begin(); it!=blinkingPixels.end(); it++) {
+    	int blinkingPixelStartingIndex = *it;
     	NeoPixel* blinkingPixel = pixels[blinkingPixelStartingIndex];
     	bool pixelBlinked = blinkingPixel->updateBlink(currTime);
     	
     	// if the pixel blinks this update, AND the ringIndex is active, add it to the tracking set
     	if (pixelBlinked) {
-    		uint16_t ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
+    		int ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
     		if (ringIndexActiveStatus[ringIndexForPixel]) {
     			ringIndicesChangedSinceLastUpdate.insert(ringIndexForPixel);
     		}
@@ -87,11 +87,12 @@ void NeoPixelRing::updateBlinkingPixels(long currTime) {
   	}
 }
 
-void NeoPixelRing::updateRingIndex(uint16_t ringIndex) {	
+void NeoPixelRing::updateRingIndex(int ringIndex) {	
 	NeoPixel* pixel = getPixelAtRingIndex(ringIndex);
 	
 	// Is the light on  both in absolute terms and relative to its blink cycle?
 	bool isOn = ringIndexActiveStatus[ringIndex] && pixel->isBlinkOn();
+	Serial.print("Update ring index "); Serial.print(ringIndex);Serial.print(" ");Serial.println(isOn);
 	
 	uint8_t r;
 	uint8_t g;
@@ -112,7 +113,8 @@ void NeoPixelRing::updateRingIndex(uint16_t ringIndex) {
 	ring->setPixelColor(ringIndex, r, g, b);
 }
 
-void NeoPixelRing::turnOnRingIndex(uint16_t index) {
+void NeoPixelRing::turnOnRingIndex(int index) {
+	Serial.print("ring index on "); Serial.println(index);
 	// If already on, just return
 	if (ringIndexActiveStatus[index]) {
 		return;
@@ -121,13 +123,14 @@ void NeoPixelRing::turnOnRingIndex(uint16_t index) {
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
 
-void NeoPixelRing::turnOnRingIndices(std::set<uint16_t> indices) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::turnOnRingIndices(std::set<int> indices) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		turnOnRingIndex(*it);
 	}
 }
 
-void NeoPixelRing::turnOffRingIndex(uint16_t index) {
+void NeoPixelRing::turnOffRingIndex(int index) {
+	Serial.print("ring index off "); Serial.println(index);
 	// If already off, just return
 	if (!ringIndexActiveStatus[index]) {
 		return;
@@ -135,76 +138,77 @@ void NeoPixelRing::turnOffRingIndex(uint16_t index) {
 	ringIndexActiveStatus[index] = false;
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
-void NeoPixelRing::turnOffRingIndices(std::set<uint16_t> indices) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::turnOffRingIndices(std::set<int> indices) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
+		Serial.print("ring indices off "); Serial.println(*it);
 		turnOffRingIndex(*it);
 	}
 }
 
-void NeoPixelRing::setRedRingIndex(uint16_t index, uint8_t red) {
+void NeoPixelRing::setRedRingIndex(int index, uint8_t red) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setRed(red);	
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
-void NeoPixelRing::setRedRingIndices(std::set<uint16_t> indices, uint8_t red) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::setRedRingIndices(std::set<int> indices, uint8_t red) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		setRedRingIndex(*it, red);
 	}
 }
 
-void NeoPixelRing::setGreenRingIndex(uint16_t index, uint8_t green) {
+void NeoPixelRing::setGreenRingIndex(int index, uint8_t green) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setGreen(green);	
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
-void NeoPixelRing::setGreenRingIndices(std::set<uint16_t> indices, uint8_t green) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::setGreenRingIndices(std::set<int> indices, uint8_t green) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		setGreenRingIndex(*it, green);
 	}
 }
 
-void NeoPixelRing::setBlueRingIndex(uint16_t index, uint8_t blue) {
+void NeoPixelRing::setBlueRingIndex(int index, uint8_t blue) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setBlue(blue);	
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
-void NeoPixelRing::setBlueRingIndices(std::set<uint16_t> indices, uint8_t blue) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::setBlueRingIndices(std::set<int> indices, uint8_t blue) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		setBlueRingIndex(*it, blue);
 	}
 }
 
-void NeoPixelRing::setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent) {
+void NeoPixelRing::setBrightnessPercentRingIndex(int index, float brightnessPercent) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setBrightnessPercent(brightnessPercent);
 	ringIndicesChangedSinceLastUpdate.insert(index);
 }
-void NeoPixelRing::setBrightnessPercentRingIndices(std::set<uint16_t> indices, float brightnessPercent) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::setBrightnessPercentRingIndices(std::set<int> indices, float brightnessPercent) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		setBrightnessPercentRingIndex(*it, brightnessPercent);
 	}
 }
 
-void NeoPixelRing::blinkRingIndex(uint16_t index, long blinkLength) {
-	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+void NeoPixelRing::blinkRingIndex(int index, long blinkLength) {
+	int startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	NeoPixel* pixel = pixels[startingIndexForRingIndex];
 	pixel->blink(blinkLength);	
 	blinkingPixels.insert(startingIndexForRingIndex);
 }
-void NeoPixelRing::blinkRingIndices(std::set<uint16_t> indices, long blinkLength) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::blinkRingIndices(std::set<int> indices, long blinkLength) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		blinkRingIndex(*it, blinkLength);
 	}
 }
 
-void NeoPixelRing::stopBlinkRingIndex(uint16_t index) {
-	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+void NeoPixelRing::stopBlinkRingIndex(int index) {
+	int startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	NeoPixel* pixel = pixels[startingIndexForRingIndex];
 	pixel->stopBlink();	
 	blinkingPixels.erase(startingIndexForRingIndex);
 }
-void NeoPixelRing::stopBlinkRingIndices(std::set<uint16_t> indices) {
-	for (std::set<uint16_t>::iterator it=indices.begin(); it!=indices.end(); it++) {
+void NeoPixelRing::stopBlinkRingIndices(std::set<int> indices) {
+	for (std::set<int>::iterator it=indices.begin(); it!=indices.end(); it++) {
 		stopBlinkRingIndex(*it);
 	}
 }
@@ -271,7 +275,7 @@ void NeoPixelRing::adjustSpinOffset(int amt) {
 
 void NeoPixelRing::randomize() {
 	// set per-pixel values
-	for (uint16_t i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		// random color
 		uint8_t r = random(MAX_COLOR_VAL+1);
 		uint8_t g = random(MAX_COLOR_VAL+1);
@@ -327,16 +331,16 @@ void NeoPixelRing::rainbow() {
 	}
 }
 
-NeoPixel* NeoPixelRing::getPixelAtRingIndex(uint16_t index) {
-	uint16_t startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
+NeoPixel* NeoPixelRing::getPixelAtRingIndex(int index) {
+	int startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	return pixels[startingIndexForRingIndex];
 }
 
-uint16_t NeoPixelRing::getRingIndexFromStartingIndex(int index) {
+int NeoPixelRing::getRingIndexFromStartingIndex(int index) {
 	return getWrappedIndex(index + spinOffset);
 }
 
-uint16_t NeoPixelRing::getStartingIndexFromRingIndex(int index) {
+int NeoPixelRing::getStartingIndexFromRingIndex(int index) {
 	return getWrappedIndex(index - spinOffset);
 }
 
@@ -344,7 +348,7 @@ uint16_t NeoPixelRing::getStartingIndexFromRingIndex(int index) {
 	Accepts any index value and calculates the proper value by "wrapping" it 
 	within the allowable bounds for the ring indices (0, size-1)
 */
-uint16_t NeoPixelRing::getWrappedIndex(int index) {
+int NeoPixelRing::getWrappedIndex(int index) {
 	
 	// accounts for negative values
 	if (index < 0)

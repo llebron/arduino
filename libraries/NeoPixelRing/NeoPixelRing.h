@@ -75,7 +75,7 @@ public:
 	/**
 		Initializes the ring with size and pin
 	*/
-	NeoPixelRing(uint16_t size, uint8_t pin);
+	NeoPixelRing(int size, uint8_t pin);
 	~NeoPixelRing();
 	
 	/**
@@ -87,38 +87,38 @@ public:
 	/**
 		Turn on the this ring index or indices
 	*/
-	void turnOnRingIndex(uint16_t index);
-	void turnOnRingIndices(std::set<uint16_t> indices);
+	void turnOnRingIndex(int index);
+	void turnOnRingIndices(std::set<int> indices);
 	
 	/**
 		Turn off this ring index or indices
 	*/
-	void turnOffRingIndex(uint16_t index);
-	void turnOffRingIndices(std::set<uint16_t> indices);
+	void turnOffRingIndex(int index);
+	void turnOffRingIndices(std::set<int> indices);
 
 	// Set a color for a ring index or indices
-	void setRedRingIndex(uint16_t index, uint8_t red);
-	void setRedRingIndices(std::set<uint16_t> indices, uint8_t red);
-	void setGreenRingIndex(uint16_t index, uint8_t green);
-	void setGreenRingIndices(std::set<uint16_t> indices, uint8_t green);
-	void setBlueRingIndex(uint16_t index, uint8_t blue);
-	void setBlueRingIndices(std::set<uint16_t> indices, uint8_t blue);
+	void setRedRingIndex(int index, uint8_t red);
+	void setRedRingIndices(std::set<int> indices, uint8_t red);
+	void setGreenRingIndex(int index, uint8_t green);
+	void setGreenRingIndices(std::set<int> indices, uint8_t green);
+	void setBlueRingIndex(int index, uint8_t blue);
+	void setBlueRingIndices(std::set<int> indices, uint8_t blue);
 	
 	// Set a brightness percent for a ring index or indices
-	void setBrightnessPercentRingIndex(uint16_t index, float brightnessPercent);
-	void setBrightnessPercentRingIndices(std::set<uint16_t> indices, float brightnessPercent);
+	void setBrightnessPercentRingIndex(int index, float brightnessPercent);
+	void setBrightnessPercentRingIndices(std::set<int> indices, float brightnessPercent);
 	
 	/**
 		blink the pixel(s) at this ring index or indices with this blinkLength
 	*/
-	void blinkRingIndex(uint16_t index, long blinkLength);
-	void blinkRingIndices(std::set<uint16_t> indices, long blinkLength);
+	void blinkRingIndex(int index, long blinkLength);
+	void blinkRingIndices(std::set<int> indices, long blinkLength);
 	
 	/**
 		stop blinking the pixel(s) at this ring index or indices
 	*/
-	void stopBlinkRingIndex(uint16_t index);
-	void stopBlinkRingIndices(std::set<uint16_t> indices);	
+	void stopBlinkRingIndex(int index);
+	void stopBlinkRingIndices(std::set<int> indices);	
 		
 	/**
 		spin the wheel
@@ -166,21 +166,21 @@ private:
 	// array of custom NeoPixel- one for each in ring - allows reference to pixels by starting index
 	NeoPixel** pixels;
 	// the size of the ring
-	uint16_t size;
+	int size;
 	// the max index of the ring
-	uint16_t maxIndex;
+	int maxIndex;
 
 	// array of on/off flags matching the ring indices
 	bool* ringIndexActiveStatus;
 	// tracking set for ring indices changed 
-	std::set<uint16_t> ringIndicesChangedSinceLastUpdate;
+	std::set<int> ringIndicesChangedSinceLastUpdate;
 	
 	// initializing this to true to force an initial update
 	bool updateAll = true;
 	
 	
 	// tracking set for blinking pixels - stores the pixel's starting index
-	std::set<uint16_t> blinkingPixels;
+	std::set<int> blinkingPixels;
 	// update the currently blinking pixels
 	void updateBlinkingPixels(long currTime);
 	
@@ -189,7 +189,7 @@ private:
 		Uses the ring index value for on/off and the information for 
 		the NeoPixel object currently at this index, compensating for spin offset
 	*/
-	void updateRingIndex(uint16_t ringIndex);
+	void updateRingIndex(int ringIndex);
 	
 	// diagnostic method to print the current state of the ring indices
 	void printRingIndexActive();
@@ -212,10 +212,10 @@ private:
 	long lastSpinIncrementTime = INCREMENT_SPIN_AT_NEXT_UPDATE;
 	
 	// utilities for converting between ring (current) and starting indices
-	NeoPixel* getPixelAtRingIndex(uint16_t index);
-	uint16_t getRingIndexFromStartingIndex(int index);
-	uint16_t getStartingIndexFromRingIndex(int index);
-	uint16_t getWrappedIndex(int index);
+	NeoPixel* getPixelAtRingIndex(int index);
+	int getRingIndexFromStartingIndex(int index);
+	int getStartingIndexFromRingIndex(int index);
+	int getWrappedIndex(int index);
 	
 };
 
