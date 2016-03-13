@@ -8,11 +8,13 @@ NeoPixelRing::NeoPixelRing(int arg_size, uint8_t arg_numLightsPerCluster, uint8_
 	isRingIndicesChangedSinceLastUpdate = false;
 	ringIndexActiveStatus = new bool[size]; 
 	ringIndicesChangedSinceLastUpdate = new bool[size];
+	blinkingPixels = new bool[size];
 	pixels = new NeoPixel*[size];
 	for (int i=0; i < size; i++) {
 		ringIndexActiveStatus[i] = false; // will be set properly by the current state of the switches
 		ringIndicesChangedSinceLastUpdate[i] = false;
 		pixels[i] = new NeoPixel(i);
+		blinkingPixels[i] = false;
 	}
 	ring->begin();
 }
@@ -95,18 +97,20 @@ void NeoPixelRing::clearRingIndexUpdateChangeTracking() {
 }
 
 void NeoPixelRing::updateBlinkingPixels(long currTime) {
-	for (std::set<int>::iterator it=blinkingPixels.begin(); it!=blinkingPixels.end(); it++) {
-    	int blinkingPixelStartingIndex = *it;
-    	NeoPixel* blinkingPixel = pixels[blinkingPixelStartingIndex];
-    	bool pixelBlinked = blinkingPixel->updateBlink(currTime);
-    	
-    	// if the pixel blinks this update, AND the ringIndex is active, add it to the tracking set
-    	if (pixelBlinked) {
-    		int ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
-    		if (ringIndexActiveStatus[ringIndexForPixel]) {
-    			flagRingIndexChangedSinceLastUpdate(ringIndexForPixel);
-    		}
-    	}
+	for (int i = 0; i < size; i++) {
+		if (blinkingPixels[i]) {
+			int blinkingPixelStartingIndex = i;
+			NeoPixel* blinkingPixel = pixels[blinkingPixelStartingIndex];
+			bool pixelBlinked = blinkingPixel->updateBlink(currTime);
+		
+			// if the pixel blinks this update, AND the ringIndex is active, add it to the tracking set
+			if (pixelBlinked) {
+				int ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
+				if (ringIndexActiveStatus[ringIndexForPixel]) {
+					flagRingIndexChangedSinceLastUpdate(ringIndexForPixel);
+				}
+			}
+		}
   	}
 }
 
@@ -223,7 +227,7 @@ void NeoPixelRing::blinkRingIndex(int index, long blinkLength) {
 	int startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	NeoPixel* pixel = pixels[startingIndexForRingIndex];
 	pixel->blink(blinkLength);	
-	blinkingPixels.insert(startingIndexForRingIndex);
+	blinkingPixels[startingIndexForRingIndex] = true;
 }
 void NeoPixelRing::blinkLightCluster(int indices[], long blinkLength) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
@@ -235,7 +239,7 @@ void NeoPixelRing::stopBlinkRingIndex(int index) {
 	int startingIndexForRingIndex = getStartingIndexFromRingIndex(index);
 	NeoPixel* pixel = pixels[startingIndexForRingIndex];
 	pixel->stopBlink();	
-	blinkingPixels.erase(startingIndexForRingIndex);
+	blinkingPixels[startingIndexForRingIndex] = false;
 }
 void NeoPixelRing::stopBlinkLightCluster(int indices[]) {
 	for (int i = 0; i < numLightsPerCluster; i++) {

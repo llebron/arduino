@@ -26,10 +26,6 @@ Nice to have: accel/decel for spin
 #include "../Adafruit_NeoPixel/Adafruit_NeoPixel.h"
 #include "../NeoPixel/NeoPixel.h"
 
-#include "../StandardCplusplus-master/StandardCplusplus.h"
-#include "../StandardCplusplus-master/set"
-#include "../StandardCplusplus-master/iterator"
-
 // Maximums used by randomize()
 const int MAX_RANDOM_SPIN_INCREMENT_DURATION = 3000;
 const int MAX_RANDOM_BLINK_LENGTH = 5000;
@@ -190,8 +186,8 @@ private:
 	bool updateAll = true;
 	
 	
-	// tracking set for blinking pixels - stores the pixel's starting index
-	std::set<int> blinkingPixels;
+	// tracking array for blinking pixels - true if the pixel's starting index is blinking
+	bool* blinkingPixels;
 	// update the currently blinking pixels
 	void updateBlinkingPixels(long currTime);
 	
