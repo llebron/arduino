@@ -83,10 +83,12 @@ bool NeoPixelRing::isRingIndexChangedSinceLastUpdate(int ringIndex) {
 	return ringIndicesChangedSinceLastUpdate[ringIndex];
 }
 
-void NeoPixelRing::flagRingIndexChangedSinceLastUpdate(int ringIndex) {
-	ringIndicesChangedSinceLastUpdate[ringIndex] = true;
-	/* set the global tracking flag true */
-	isRingIndicesChangedSinceLastUpdate = true;
+void NeoPixelRing::flagRingIndexChangedSinceLastUpdateIfActive(int ringIndex) {
+	if (ringIndexActiveStatus[ringIndex]) {
+		ringIndicesChangedSinceLastUpdate[ringIndex] = true;
+		/* set the global tracking flag true */
+		isRingIndicesChangedSinceLastUpdate = true;
+	}
 }
 
 void NeoPixelRing::clearRingIndexUpdateChangeTracking() {
@@ -106,9 +108,7 @@ void NeoPixelRing::updateBlinkingPixels(long currTime) {
 			// if the pixel blinks this update, AND the ringIndex is active, add it to the tracking set
 			if (pixelBlinked) {
 				int ringIndexForPixel = getRingIndexFromStartingIndex(blinkingPixelStartingIndex);
-				if (ringIndexActiveStatus[ringIndexForPixel]) {
-					flagRingIndexChangedSinceLastUpdate(ringIndexForPixel);
-				}
+				flagRingIndexChangedSinceLastUpdateIfActive(ringIndexForPixel);
 			}
 		}
   	}
@@ -147,7 +147,7 @@ void NeoPixelRing::turnOnRingIndex(int index) {
 		return;
 	}
 	ringIndexActiveStatus[index] = true;
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
 
 void NeoPixelRing::turnOnLightCluster(int indices[]) {
@@ -163,7 +163,7 @@ void NeoPixelRing::turnOffRingIndex(int index) {
 		return;
 	}
 	ringIndexActiveStatus[index] = false;
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
 
 void NeoPixelRing::turnOffLightCluster(int indices[]) {
@@ -175,7 +175,8 @@ void NeoPixelRing::turnOffLightCluster(int indices[]) {
 void NeoPixelRing::setRedRingIndex(int index, uint8_t red) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setRed(red);	
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
+	
 }
 void NeoPixelRing::setRedLightCluster(int indices[], uint8_t red) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
@@ -186,7 +187,7 @@ void NeoPixelRing::setRedLightCluster(int indices[], uint8_t red) {
 void NeoPixelRing::setGreenRingIndex(int index, uint8_t green) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setGreen(green);	
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
 void NeoPixelRing::setGreenLightCluster(int indices[], uint8_t green) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
@@ -197,7 +198,7 @@ void NeoPixelRing::setGreenLightCluster(int indices[], uint8_t green) {
 void NeoPixelRing::setBlueRingIndex(int index, uint8_t blue) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
 	pixel->setBlue(blue);	
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
 void NeoPixelRing::setBlueLightCluster(int indices[], uint8_t blue) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
@@ -211,7 +212,7 @@ void NeoPixelRing::setBrightnessPercentRingIndex(int index, float brightnessPerc
 	//Serial.print("pixel is "); Serial.print(!pixel);Serial.print(" bright: ");
 	//	Serial.println(pixel->getBrightnessPercent());
 	pixel->setBrightnessPercent(brightnessPercent);
-	flagRingIndexChangedSinceLastUpdate(index);
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 	//Serial.print("after set brightness for: "); Serial.println(index);
 	/*Serial.print("pixel is "); Serial.print(!pixel);Serial.print(" bright: ");
 		Serial.println(pixel->getBrightnessPercent());

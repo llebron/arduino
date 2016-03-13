@@ -175,7 +175,7 @@ private:
 	// flag and tracking array for ring indices changed since last update
 	bool isRingIndicesChangedSinceLastUpdate;
 	bool* ringIndicesChangedSinceLastUpdate;
-	void flagRingIndexChangedSinceLastUpdate(int ringIndex);
+	void flagRingIndexChangedSinceLastUpdateIfActive(int ringIndex);
 	/**
 		Did this ring index change since last update?
 	*/

@@ -139,9 +139,7 @@
          ring.turnOnLightCluster(lightsForSwitches[i]);
       } else {
         Serial.println(" open");
-        ring.turnOnLightCluster(lightsForSwitches[i]);
-        
-        // !!!! TESTING AUTO ON !!!! //
+        ring.turnOffLightCluster(lightsForSwitches[i]);
       }
     }
   }
