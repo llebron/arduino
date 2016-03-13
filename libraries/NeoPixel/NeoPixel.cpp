@@ -58,6 +58,10 @@ bool NeoPixel::isBlinkOn() {
 	return _isBlinkOn;
 }
 
+float NeoPixel::getBrightnessPercent() {
+	return brightnessPercent;
+}
+
 void NeoPixel::setBrightnessPercent(float arg_brightnessPercent) {
 	if (arg_brightnessPercent < 0) {
 		arg_brightnessPercent = 0;

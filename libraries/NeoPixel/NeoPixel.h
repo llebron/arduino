@@ -40,6 +40,8 @@ public:
 	// so "absolute" on/off can be managed by NeoPixelRing
 	void stopBlink();
 	
+	float getBrightnessPercent();
+	
 	// set brightness percent from 0 <-> 1
 	void setBrightnessPercent(float arg_brightnessPercent);
 	

@@ -75,7 +75,7 @@ public:
 	/**
 		Initializes the ring with size and pin
 	*/
-	NeoPixelRing(int size, uint8_t pin);
+	NeoPixelRing(int size, uint8_t numLightsPerCluster, uint8_t pin);
 	~NeoPixelRing();
 	
 	/**
@@ -85,40 +85,40 @@ public:
 	void update();	
 	
 	/**
-		Turn on the this ring index or indices
+		Turn on the this ring index or indices (iterates through numLightsPerCluster)
 	*/
 	void turnOnRingIndex(int index);
-	void turnOnRingIndices(std::set<int> indices);
+	void turnOnLightCluster(int indices[]);
 	
 	/**
-		Turn off this ring index or indices
+		Turn off this ring index or indices (iterates through numLightsPerCluster)
 	*/
 	void turnOffRingIndex(int index);
-	void turnOffRingIndices(std::set<int> indices);
+	void turnOffLightCluster(int indices[]);
 
 	// Set a color for a ring index or indices
 	void setRedRingIndex(int index, uint8_t red);
-	void setRedRingIndices(std::set<int> indices, uint8_t red);
+	void setRedLightCluster(int indices[], uint8_t red);
 	void setGreenRingIndex(int index, uint8_t green);
-	void setGreenRingIndices(std::set<int> indices, uint8_t green);
+	void setGreenLightCluster(int indices[], uint8_t green);
 	void setBlueRingIndex(int index, uint8_t blue);
-	void setBlueRingIndices(std::set<int> indices, uint8_t blue);
+	void setBlueLightCluster(int indices[], uint8_t blue);
 	
-	// Set a brightness percent for a ring index or indices
+	// Set a brightness percent for a ring index or indices (iterates through numLightsPerCluster)
 	void setBrightnessPercentRingIndex(int index, float brightnessPercent);
-	void setBrightnessPercentRingIndices(std::set<int> indices, float brightnessPercent);
+	void setBrightnessPercentLightCluster(int indices[], float brightnessPercent);
 	
 	/**
-		blink the pixel(s) at this ring index or indices with this blinkLength
+		blink the pixel(s) at this ring index or indices with this blinkLength (iterates through numLightsPerCluster)
 	*/
 	void blinkRingIndex(int index, long blinkLength);
-	void blinkRingIndices(std::set<int> indices, long blinkLength);
+	void blinkLightCluster(int indices[], long blinkLength);
 	
 	/**
-		stop blinking the pixel(s) at this ring index or indices
+		stop blinking the pixel(s) at this ring index or indices (iterates through numLightsPerCluster)
 	*/
 	void stopBlinkRingIndex(int index);
-	void stopBlinkRingIndices(std::set<int> indices);	
+	void stopBlinkLightCluster(int indices[]);	
 		
 	/**
 		spin the wheel
@@ -169,11 +169,22 @@ private:
 	int size;
 	// the max index of the ring
 	int maxIndex;
+	
+	// the number of lights in a cluster. Used for assigning a single switch to a group of lights
+	uint8_t numLightsPerCluster;
 
 	// array of on/off flags matching the ring indices
 	bool* ringIndexActiveStatus;
-	// tracking set for ring indices changed 
-	std::set<int> ringIndicesChangedSinceLastUpdate;
+	
+	// flag and tracking array for ring indices changed since last update
+	bool isRingIndicesChangedSinceLastUpdate;
+	bool* ringIndicesChangedSinceLastUpdate;
+	void flagRingIndexChangedSinceLastUpdate(int ringIndex);
+	/**
+		Did this ring index change since last update?
+	*/
+	bool isRingIndexChangedSinceLastUpdate(int ringIndex);
+	void clearRingIndexUpdateChangeTracking();
 	
 	// initializing this to true to force an initial update
 	bool updateAll = true;
@@ -190,6 +201,8 @@ private:
 		the NeoPixel object currently at this index, compensating for spin offset
 	*/
 	void updateRingIndex(int ringIndex);
+	
+
 	
 	// diagnostic method to print the current state of the ring indices
 	void printRingIndexActive();
