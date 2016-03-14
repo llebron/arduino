@@ -55,12 +55,17 @@
     
     /* randomize experiment*/
     //ring.randomize();
-    //ring.blinkRingIndex(0, 100);
+    //ring.blinkRingIndex(0, 10);
     //ring.spin(1000, true);
     
     // testing to max out memory
     for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.blinkRingIndex(i, 1);
+      ring.blinkRingIndex(i, 100);
+    }
+    
+    // Test to try to cap out memory
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+      ring.setBrightnessPercentRingIndex(i, .2);
     }
         
     printFreeMemory("");
@@ -68,17 +73,17 @@
   }
   
   void loop() {
-    printFreeMemory("1");
+    //printFreeMemory("1");
     
     // first, update all inputs - switches, knobs, etc - 
     updateComponents();
     
-    printFreeMemory("2");
+    //printFreeMemory("2");
     
     // Finally, update the ring itself, which should now have all current state, and will be able to determine if it needs to refresh
     ring.update();
     
-    printFreeMemory("3");
+    //printFreeMemory("3");
   
   }
   
@@ -88,13 +93,7 @@
     if (pot.valChangedThisUpdate()) {
       //Serial.print("pot changed to: "); Serial.println(pot.getPercentVal());
     }
-    
-    // Test to try to cap out memory
-    for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.setBrightnessPercentRingIndex(i, .2);
-    }
-    
-    
+        
     // update spin pot - if it has changed, call spin()
     // update light knobs
     // update blink and brightness sliders
