@@ -31,7 +31,7 @@ NeoPixelRing::~NeoPixelRing() {
 
 void NeoPixelRing::printRingIndexActive() {
 	for (int i=0; i < size; i++) {
-		Serial.print("ring active status for "); Serial.print(i); Serial.print(": "); Serial.println(ringIndexActiveStatus[i]);
+		logger.log("ring active status for ", i, ": ", ringIndexActiveStatus[i]);
 	}
 }
 
@@ -119,7 +119,7 @@ void NeoPixelRing::updateRingIndex(int ringIndex) {
 	
 	// Is the light on  both in absolute terms and relative to its blink cycle?
 	bool isOn = ringIndexActiveStatus[ringIndex] && pixel->isBlinkOn();
-	Serial.print("Update ring index "); Serial.print(ringIndex);Serial.print(" ");Serial.println(isOn);
+	logger.log("Update ring index ", ringIndex, " ", isOn);
 	
 	uint8_t r;
 	uint8_t g;
@@ -141,7 +141,7 @@ void NeoPixelRing::updateRingIndex(int ringIndex) {
 }
 
 void NeoPixelRing::turnOnRingIndex(int index) {
-	Serial.print("ring index on "); Serial.println(index);
+	logger.log("ring index on ", index);
 	// If already on, just return
 	if (ringIndexActiveStatus[index]) {
 		return;
@@ -157,7 +157,7 @@ void NeoPixelRing::turnOnLightCluster(int indices[]) {
 }
 
 void NeoPixelRing::turnOffRingIndex(int index) {
-	Serial.print("ring index off "); Serial.println(index);
+	logger.log("ring index off ", index);
 	// If already off, just return
 	if (!ringIndexActiveStatus[index]) {
 		return;
@@ -207,16 +207,9 @@ void NeoPixelRing::setBlueLightCluster(int indices[], uint8_t blue) {
 }
 
 void NeoPixelRing::setBrightnessPercentRingIndex(int index, float brightnessPercent) {
-	//Serial.print("before set brightness for: "); Serial.println(index);
 	NeoPixel* pixel = getPixelAtRingIndex(index);
-	//Serial.print("pixel is "); Serial.print(!pixel);Serial.print(" bright: ");
-	//	Serial.println(pixel->getBrightnessPercent());
 	pixel->setBrightnessPercent(brightnessPercent);
 	flagRingIndexChangedSinceLastUpdateIfActive(index);
-	//Serial.print("after set brightness for: "); Serial.println(index);
-	/*Serial.print("pixel is "); Serial.print(!pixel);Serial.print(" bright: ");
-		Serial.println(pixel->getBrightnessPercent());
-		Serial.println();*/
 }
 void NeoPixelRing::setBrightnessPercentLightCluster(int indices[], float brightnessPercent) {
 	for (int i = 0; i < numLightsPerCluster; i++) {

@@ -1,3 +1,4 @@
+  #include <Log.h>
   #include <Potentiometer.h>
   #include <Switch.h>
   
@@ -13,6 +14,8 @@
   const int NUM_LIGHTS_PER_SWITCH = 3;
   /* stand-in until I come up with individualized settings */
   const int DEBOUNCE_TIME = 30;
+  
+  Log logger;
   
   /* has the random number generator been seeded? Set true the first time random is used */
   bool seededRand = false;
@@ -47,8 +50,8 @@
   */  
   
   void setup() {
-    Serial.begin(9600);  
-    Serial.println("--- Start Serial Monitor ");
+     Serial.begin(9600);  
+    logger.log("--- Start Serial Monitor ");
     
     /* Initialize the light switches */
     initializeLightSwitches();
@@ -60,7 +63,7 @@
     
     // testing to max out memory
     for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.blinkRingIndex(i, 100);
+      ring.blinkRingIndex(i, 10);
     }
     
     // Test to try to cap out memory
@@ -68,22 +71,22 @@
       ring.setBrightnessPercentRingIndex(i, .2);
     }
         
-    printFreeMemory("");
+    printFreeMemory();
     
   }
   
   void loop() {
-    //printFreeMemory("1");
+    //printFreeMemory();
     
     // first, update all inputs - switches, knobs, etc - 
     updateComponents();
     
-    //printFreeMemory("2");
+    //printFreeMemory();
     
     // Finally, update the ring itself, which should now have all current state, and will be able to determine if it needs to refresh
     ring.update();
     
-    //printFreeMemory("3");
+    //printFreeMemory();
   
   }
   
@@ -91,7 +94,8 @@
     updateLightSwitches();
     pot.update();
     if (pot.valChangedThisUpdate()) {
-      //Serial.print("pot changed to: "); Serial.println(pot.getPercentVal());
+      // need to support float for logger....
+      //logger.log("pot changed to: ", pot.getPercentVal());
     }
         
     // update spin pot - if it has changed, call spin()
@@ -126,18 +130,18 @@
       lightSwitches[i] = new Switch(switchPin, DEBOUNCE_TIME); 
       
       for (int j = 0; j < NUM_LIGHTS_PER_SWITCH ; j++) {
-        //Serial.print("lightsForSwitch ");Serial.print(i);Serial.print(" ");Serial.println(lightRingIndex);
+        //logger.log("lightsForSwitch ", i, " ", lightRingIndex);
         lightsForSwitches[i][j] = lightRingIndex;
         lightRingIndex++;
       }
       
-      Serial.print("init light switch "); Serial.print(i);
+      logger.log("init light switch ", i);
       /* Set lights on/off based on initial state */
       if (lightSwitches[i]->isClosed()) {
-         Serial.println(" closed");
+         logger.log(" closed");
          ring.turnOnLightCluster(lightsForSwitches[i]);
       } else {
-        Serial.println(" open");
+        logger.log(" open");
         ring.turnOffLightCluster(lightsForSwitches[i]);
       }
     }
@@ -148,19 +152,18 @@
       lightSwitches[i]->update();
       
       if (lightSwitches[i]->closedThisUpdate()) {
-        Serial.print("light switch closed "); Serial.println(i);
+        logger.log("light switch closed ", i);
         ring.turnOnLightCluster(lightsForSwitches[i]);
       } else if (lightSwitches[i]->openedThisUpdate()) {
-        Serial.print("light switch opened "); Serial.println(i);
+        logger.log("light switch opened ", i);
         ring.turnOffLightCluster(lightsForSwitches[i]);
       }
     }
   }
   
   //Look closely at how memory is allocated in the various classes... seems like I might have a mem leak or misallocation somewhere?
-  void printFreeMemory(String prefix) {
-    Serial.print(prefix);Serial.print(" free mem: ");
-    Serial.print(availableMemory()); Serial.print(", ");Serial.println(freeMemory());
+  void printFreeMemory() {
+    logger.log(" free mem: ", availableMemory(), ", ", freeMemory());
   }
   
   int availableMemory() {

@@ -25,6 +25,7 @@ Nice to have: accel/decel for spin
 
 #include "../Adafruit_NeoPixel/Adafruit_NeoPixel.h"
 #include "../NeoPixel/NeoPixel.h"
+#include "../Log/log.h"
 
 // Maximums used by randomize()
 const int MAX_RANDOM_SPIN_INCREMENT_DURATION = 3000;
@@ -225,6 +226,8 @@ private:
 	int getRingIndexFromStartingIndex(int index);
 	int getStartingIndexFromRingIndex(int index);
 	int getWrappedIndex(int index);
+	
+	Log logger;
 	
 };
 
