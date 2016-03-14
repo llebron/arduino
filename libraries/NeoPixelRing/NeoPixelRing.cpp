@@ -162,8 +162,9 @@ void NeoPixelRing::turnOffRingIndex(int index) {
 	if (!ringIndexActiveStatus[index]) {
 		return;
 	}
-	ringIndexActiveStatus[index] = false;
+	// Must flag before making the indexActiveStatus false
 	flagRingIndexChangedSinceLastUpdateIfActive(index);
+	ringIndexActiveStatus[index] = false;
 }
 
 void NeoPixelRing::turnOffLightCluster(int indices[]) {

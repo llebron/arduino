@@ -92,6 +92,7 @@
   
   void updateComponents() {
     updateLightSwitches();
+    
     pot.update();
     if (pot.valChangedThisUpdate()) {
       // need to support float for logger....
