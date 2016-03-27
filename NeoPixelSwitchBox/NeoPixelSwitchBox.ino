@@ -2,6 +2,14 @@
   #include <Potentiometer.h>
   #include <Switch.h>
   
+  /*
+  Tasks 
+  
+  updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
+  */
+  
+ 
+  
   // have to include libraries referenced within libraries in the sketch as well!
   #include <Adafruit_NeoPixel.h>
   #include <math.h>
@@ -14,6 +22,12 @@
   const int NUM_LIGHTS_PER_SWITCH = 3;
   /* stand-in until I come up with individualized settings */
   const int DEBOUNCE_TIME = 30;
+  
+  /* The fastest the spin will increment */
+  const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
+  const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 5000;
+  const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
+  const float POTENTIOMETER_MIDDLE_PERCENT = .5;
   
   Log logger;
   
@@ -30,8 +44,8 @@
   // ring size NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH assigned for each switch, on pin 13
   NeoPixelRing ring(NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH, 13);
     
-  // test pot
-  Potentiometer pot(A0);
+  // potentiometer to control ring spin speed
+  Potentiometer spinKnob(A0);
   
   //button on pin 12, debounce for DEBOUNCE_TIME
   Switch randomButton(12, DEBOUNCE_TIME);
@@ -62,9 +76,9 @@
     //ring.spin(1000, true);
     
     // testing to max out memory
-    for (int i = 0; i < NUM_LIGHTS; i++) {
+    /*for (int i = 0; i < NUM_LIGHTS; i++) {
       ring.blinkRingIndex(i, 10);
-    }
+    }*/
     
     // Test to try to cap out memory
     for (int i = 0; i < NUM_LIGHTS; i++) {
@@ -92,14 +106,8 @@
   
   void updateComponents() {
     updateLightSwitches();
-    
-    pot.update();
-    if (pot.valChangedThisUpdate()) {
-      // need to support float for logger....
-      //logger.log("pot changed to: ", pot.getPercentVal());
-    }
-        
-    // update spin pot - if it has changed, call spin()
+    updateSpinKnob();
+
     // update light knobs
     // update blink and brightness sliders
     // update switches and other buttons
@@ -107,6 +115,56 @@
     // update the status of all switches/buttons - might be worth putting them in an array to make it an easy loop
     updateRandomButton();
   }
+  
+  void updateSpinKnob() {
+    spinKnob.update();
+    if (spinKnob.valChangedThisUpdate()) {
+      float spinKnobPercent = spinKnob.getPercentVal();
+      logger.log("spin knob changed to: ", spinKnobPercent);
+      
+      /* If the knob is centered, send the special flag to the ring to stop spinning, and return 
+        TODO: probably want a delta here to give a bit of wiggle room for getting "close to center"
+      */
+      if (spinKnobPercent == POTENTIOMETER_MIDDLE_PERCENT) {
+        logger.log("Spin knob at center");
+        ring.spin(-1, true);
+        return;
+      }
+      
+      /* 
+        Clockwise if spin pot is >= midpoint 
+        Determine "raw" amount spin knob is turned from center (.5 max since it's from 0-1)
+      */
+      boolean isClockwise;
+      float rawSpinKnobAmtTurnedFromCenter;
+      if (spinKnobPercent >= POTENTIOMETER_MIDDLE_PERCENT) {
+        isClockwise = true;
+        rawSpinKnobAmtTurnedFromCenter = 1 - spinKnobPercent;
+        logger.log("Spin knob clockwise", rawSpinKnobAmtTurnedFromCenter);
+      } else {
+        isClockwise = false;
+        rawSpinKnobAmtTurnedFromCenter = spinKnobPercent - 0;
+        logger.log("Spin knob counter clockwise", rawSpinKnobAmtTurnedFromCenter);
+      }
+      
+      /* Percent the spin knob is away from center (0-1) */
+      float percentSpinKnobAmtTurnedFromCenter = rawSpinKnobAmtTurnedFromCenter / .5;
+      logger.log("Spin knob percentSpinKnobAmtTurnedFromCenter", percentSpinKnobAmtTurnedFromCenter);
+      
+      /* How much of the increment time range to use (from min - max) is the "opposite" of the spin knob percent amt, since more is less time */
+      float percentOfIncrementTimeRange = 1 - percentSpinKnobAmtTurnedFromCenter;
+      logger.log("Spin knob percentOfIncrementTimeRange", percentOfIncrementTimeRange);
+      
+      /* Use this percent to determine the actual increment time*/
+      long incrementDuration = FASTEST_SPIN_INCREMENT_DURATION_MS + (SPIN_INCREMENT_DURATION_RANGE_MS * percentOfIncrementTimeRange);
+      logger.log("Spin knob incrementDuration", incrementDuration);
+      
+      ring.spin(incrementDuration, isClockwise);
+      
+    }
+  }
+  
+  
   
   void updateRandomButton() {
      randomButton.update();

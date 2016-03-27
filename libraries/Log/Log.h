@@ -43,10 +43,44 @@ public:
 		}
 	}
 	
+	void log(String msg, float f) {
+		if (isLogging) {
+			Serial.print(msg); Serial.println(f);
+		}
+	}
+	void log(String msg, float f, String msg2) {
+		if (isLogging) {
+			Serial.print(msg); Serial.print(f); Serial.println(msg2);
+		}
+	}
+	void log(String msg, float f, String msg2, float f2) {
+		if (isLogging) {
+			Serial.print(msg); Serial.print(f); Serial.print(msg2); Serial.println(f2);
+		}
+	}
+	void log(String msg, float f, String msg2, float f2, String msg3) {
+		if (isLogging) {
+			Serial.print(msg); Serial.print(f); Serial.print(msg2); Serial.print(f2); Serial.println(msg3);
+		}
+	}
+	void log(String msg, float f, String msg2, float f2, String msg3, float f3) {
+		if (isLogging) {
+			Serial.print(msg); Serial.print(f); Serial.print(msg2); Serial.print(f2); Serial.print(msg3); Serial.println(f3);
+		}
+	}
+	
+	
+	/* Might need more long versions */
+	void log(String msg, long l) {
+		if (isLogging) {
+			Serial.print(msg); Serial.println(l);
+		}
+	}
+	
 
 	
 private:
-	const bool isLogging = false;
+	const bool isLogging = true;
 };
 
 #endif
