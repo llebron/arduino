@@ -14,7 +14,7 @@ const int MAX_POT_VALUE = 1023;
 
 // only considered a value change if the jump is at least of this delta
 // prevents noise from random fluctuation
-const int MIN_CHANGE_DELTA = 5;
+const int MIN_CHANGE_DELTA = 11;
 
 class Potentiometer {
 public:
@@ -32,7 +32,7 @@ public:
 	
 private:
 	int potPin; //the pot pin
-	int lastReading; // the last pot reading
+	int lastAcknowledgedReading; // the last pot reading acknowledged as actual input
 	bool changedThisUpdate = false; // did the pot change this update?
 };
 

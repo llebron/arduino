@@ -119,7 +119,8 @@ void NeoPixelRing::updateRingIndex(int ringIndex) {
 	
 	// Is the light on  both in absolute terms and relative to its blink cycle?
 	bool isOn = ringIndexActiveStatus[ringIndex] && pixel->isBlinkOn();
-	logger.log("Update ring index ", ringIndex, " ", isOn);
+	
+	//logger.log("Update ring index ", ringIndex, " ", isOn);
 	
 	uint8_t r;
 	uint8_t g;

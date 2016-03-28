@@ -80,7 +80,7 @@ public:
 
 	
 private:
-	const bool isLogging = false;
+	const bool isLogging = true;
 };
 
 #endif

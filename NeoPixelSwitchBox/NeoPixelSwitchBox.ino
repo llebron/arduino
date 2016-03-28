@@ -43,9 +43,13 @@
   
   // ring size NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH assigned for each switch, on pin 13
   NeoPixelRing ring(NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH, 13);
-    
+  
+  /* Potentiometers on analog inupts*/
   // potentiometer to control ring spin speed
   Potentiometer spinKnob(A0);
+  
+  /* Buttons */
+  Switch toggleSpinButton(10, DEBOUNCE_TIME);
   
   //button on pin 12, debounce for DEBOUNCE_TIME
   Switch randomButton(12, DEBOUNCE_TIME);
@@ -75,6 +79,9 @@
     
     /* Initialize the light switches */
     initializeLightSwitches();
+    
+    /* Initialize the pots to set their initial values */
+    initializePotentiometers();
     
     /* randomize experiment*/
     //ring.randomize();
@@ -114,7 +121,10 @@
   
   void updateComponents() {
     updateLightSwitches();
+    
+    // update the spin knob before the spin toggle, just in case they both change on the same update. Want the button to override */
     updateSpinKnob();
+    updateToggleSpinButton();
 
     // update light knobs
     // update blink and brightness sliders
@@ -172,6 +182,14 @@
     }
   }
   
+  void updateToggleSpinButton() {
+     toggleSpinButton.update();
+     if (toggleSpinButton.closedThisUpdate()) {
+       logger.log("toggle spin button closed ");
+       ring.toggleSpin();
+     }
+  }
+  
   
   
   void updateRandomButton() {
@@ -226,6 +244,13 @@
         ring.turnOffLightCluster(lightsForSwitches[i]);
       }
     }
+  }
+  
+  void initializePotentiometers() {
+    /* Update the spin knob so that its value is set internally. Don't set it to spin at this point. 
+      Don't want to spin until the knob is moved or the a button is pressed by the user
+    */
+    spinKnob.update();
   }
   
   //Look closely at how memory is allocated in the various classes... seems like I might have a mem leak or misallocation somewhere?
