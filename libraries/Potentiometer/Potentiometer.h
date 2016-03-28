@@ -10,7 +10,7 @@ A simple library for a potentiometer connected between 5V, ground and an an anal
 #ifndef POTENTIOMETER_H
 #define POTENTIOMETER_H
 
-const int MAX_POT_VALUE = 1024;
+const int MAX_POT_VALUE = 1023;
 
 // only considered a value change if the jump is at least of this delta
 // prevents noise from random fluctuation

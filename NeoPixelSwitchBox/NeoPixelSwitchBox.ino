@@ -25,7 +25,7 @@
   
   /* The fastest the spin will increment */
   const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
-  const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 5000;
+  const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
   const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
   const float POTENTIOMETER_MIDDLE_PERCENT = .5;
   
@@ -67,6 +67,12 @@
      Serial.begin(9600);  
     logger.log("--- Start Serial Monitor ");
     
+    /* 
+      Use external analog reference, so that potentiometers work relative to the voltage being supplied by the battery 
+      N.B. Must be sure this is configured before the first analogRead(). For this sketch, that shouldn't be uitil the first update call for potentiometers
+    */
+    analogReference(EXTERNAL);
+    
     /* Initialize the light switches */
     initializeLightSwitches();
     
@@ -84,6 +90,8 @@
     for (int i = 0; i < NUM_LIGHTS; i++) {
       ring.setBrightnessPercentRingIndex(i, .2);
     }
+    
+    ring.rainbow();
         
     printFreeMemory();
     
@@ -139,11 +147,11 @@
       float rawSpinKnobAmtTurnedFromCenter;
       if (spinKnobPercent >= POTENTIOMETER_MIDDLE_PERCENT) {
         isClockwise = true;
-        rawSpinKnobAmtTurnedFromCenter = 1 - spinKnobPercent;
+        rawSpinKnobAmtTurnedFromCenter = spinKnobPercent - .5;
         logger.log("Spin knob clockwise", rawSpinKnobAmtTurnedFromCenter);
       } else {
         isClockwise = false;
-        rawSpinKnobAmtTurnedFromCenter = spinKnobPercent - 0;
+        rawSpinKnobAmtTurnedFromCenter = .5 - spinKnobPercent;
         logger.log("Spin knob counter clockwise", rawSpinKnobAmtTurnedFromCenter);
       }
       
