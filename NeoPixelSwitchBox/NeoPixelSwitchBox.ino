@@ -14,9 +14,7 @@
   rainbow button
   random button
   increment/decrement buttons
-  */
-  
- 
+  */ 
   
   // have to include libraries referenced within libraries in the sketch as well!
   #include <Adafruit_NeoPixel.h>
@@ -68,6 +66,8 @@
   Potentiometer spinKnob(A0);
   // Control blink rate for lights being edited
   Potentiometer blinkKnob(A1);
+  // Control brightness rate for lights being edited
+  Potentiometer brightnessKnob(A2);
   // Control RGB for lights being edited
   Potentiometer redKnob(A3);
   Potentiometer greenKnob(A4);
@@ -106,27 +106,7 @@
     initializeLightSwitches();
     
     /* Initialize the pots to set their initial values */
-    initializePotentiometers();
-    
-    /* randomize experiment*/
-    //ring.randomize();
-    //ring.blinkRingIndex(0, 10);
-    //ring.spin(1000, true);
-    
-    // testing to max out memory
-    /*for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.blinkRingIndex(i, 10);
-    }*/
-    
-    // Test to try to cap out memory
-    for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.setBrightnessPercentRingIndex(i, .5);
-    }
-    
-    //ring.rainbow();
-        
-    printFreeMemory();
-    
+    initializePotentiometers();    
   }
   
   void loop() {
@@ -151,9 +131,9 @@
     updateSpinKnob();
     updateToggleSpinButton();
     
-    // update the blink rate knob
+    // update the other pots
     updateBlinkKnob();
-    
+    updateBrightnessKnob();
     updateRGBKnobs();
 
     // update light knobs
@@ -235,6 +215,15 @@
       logger.log("Blink knob duration", blinkDuration);
       
       ring.blinkLightCluster(RING_INDICES_TO_EDIT, blinkDuration);
+    }
+  }
+  
+  void updateBrightnessKnob() {
+    brightnessKnob.update();
+    if (brightnessKnob.valChangedThisUpdate()) {
+      float brightnessPercent = brightnessKnob.getPercentVal();
+      logger.log("brightness knob changed to: ", brightnessPercent);
+      ring.setBrightnessPercentLightCluster(RING_INDICES_TO_EDIT, brightnessPercent);
     }
   }
   
@@ -323,8 +312,7 @@
   void initializePotentiometers() {
     spinKnob.update();
     blinkKnob.update();
-    
-    /* Sets the inital values for the rgb knobs */
+    brightnessKnob.update();
     redKnob.update();
     greenKnob.update();
     blueKnob.update();
