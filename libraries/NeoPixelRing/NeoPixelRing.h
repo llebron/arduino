@@ -94,12 +94,12 @@ public:
 	void turnOffLightCluster(int indices[]);
 
 	// Set a color for a ring index or indices
-	void setRedRingIndex(int index, uint8_t red);
-	void setRedLightCluster(int indices[], uint8_t red);
-	void setGreenRingIndex(int index, uint8_t green);
-	void setGreenLightCluster(int indices[], uint8_t green);
-	void setBlueRingIndex(int index, uint8_t blue);
-	void setBlueLightCluster(int indices[], uint8_t blue);
+	void setRedRingIndex(int index, float redPercent);
+	void setRedLightCluster(int indices[], float redPercent);
+	void setGreenRingIndex(int index, float greenPercent);
+	void setGreenLightCluster(int indices[], float greenPercent);
+	void setBlueRingIndex(int index, float bluePercent);
+	void setBlueLightCluster(int indices[], float bluePercent);
 	
 	// Set a brightness percent for a ring index or indices (iterates through numLightsPerCluster)
 	void setBrightnessPercentRingIndex(int index, float brightnessPercent);

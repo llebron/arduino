@@ -12,10 +12,10 @@ Designed to be accessed via the API provided by NeoPixelRing
 #include "Arduino.h"
 #include <math.h> 
 
-//max color value
-// const int MAX_COLOR_VAL = 255;
-// toning down overall brightness by setting color to be half max
-const int MAX_COLOR_VAL = 77;
+const int MAX_COLOR_VAL = 255;
+
+// Toning down overall brightness by scaling down by this factor
+const float BRIGHTNESS_SCALING_FACTOR = .1f;
 
 class NeoPixel {
 public:
@@ -45,9 +45,10 @@ public:
 	// set brightness percent from 0 <-> 1
 	void setBrightnessPercent(float arg_brightnessPercent);
 	
-	void setRed(uint8_t r);
-	void setGreen(uint8_t g);
-	void setBlue(uint8_t b);
+	/* Set the color percentage */
+	void setRedPercent(float r);
+	void setGreenPercent(float g);
+	void setBluePercent(float b);
 	
 	// get the color value - takes current brightness into account
 	uint8_t getRed();
@@ -65,12 +66,13 @@ private:
 	// brightness 0 - 1 - multiplies the RGB values when setting color
 	float brightnessPercent = 1;
 	
-	// RGB (0-255)
+	// RGB
 	uint8_t red = MAX_COLOR_VAL;
 	uint8_t green = MAX_COLOR_VAL;
 	uint8_t blue = MAX_COLOR_VAL;
-	// cap the colorVal from 0 <-> MAX_COLOR_VAL
-	uint8_t getCappedColorValue(uint8_t colorVal);
+	
+	// get the colorVal for the percent, from 0 <-> MAX_COLOR_VAL
+	uint8_t getColorValueForPercent(float colorVal);
 	
 	// blinking logic - whether or not light is blinking is tracked by the NeoPixelRing
 	// when did blink last toggle

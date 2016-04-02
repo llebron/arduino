@@ -23,11 +23,14 @@
   /* stand-in until I come up with individualized settings */
   const int DEBOUNCE_TIME = 30;
   
-  /* The fastest the spin will increment */
+  /* spin increment constants */
   const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
   const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
   const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
   const float POTENTIOMETER_MIDDLE_PERCENT = .5;
+  
+  /* The ring indices to edit with "local" operations like brightness, blink and rgb */
+  int RING_INDICES_TO_EDIT[] = {0,1,2};
   
   Log logger;
   
@@ -47,6 +50,9 @@
   /* Potentiometers on analog inupts*/
   // potentiometer to control ring spin speed
   Potentiometer spinKnob(A0);
+  Potentiometer redKnob(A3);
+  Potentiometer greenKnob(A4);
+  Potentiometer blueKnob(A5);
   
   /* Buttons */
   Switch toggleSpinButton(10, DEBOUNCE_TIME);
@@ -95,10 +101,10 @@
     
     // Test to try to cap out memory
     for (int i = 0; i < NUM_LIGHTS; i++) {
-      ring.setBrightnessPercentRingIndex(i, .2);
+      ring.setBrightnessPercentRingIndex(i, .5);
     }
     
-    ring.rainbow();
+    //ring.rainbow();
         
     printFreeMemory();
     
@@ -125,6 +131,8 @@
     // update the spin knob before the spin toggle, just in case they both change on the same update. Want the button to override */
     updateSpinKnob();
     updateToggleSpinButton();
+    
+    updateRGBKnobs();
 
     // update light knobs
     // update blink and brightness sliders
@@ -179,6 +187,21 @@
       
       ring.spin(incrementDuration, isClockwise);
       
+    }
+  }
+  
+  void updateRGBKnobs() {
+    redKnob.update();
+    greenKnob.update();
+    blueKnob.update();
+    /* If any color changes, update all, so that the settings are current */
+    if (redKnob.valChangedThisUpdate() || greenKnob.valChangedThisUpdate() || blueKnob.valChangedThisUpdate()) {
+      float redKnobPercent = redKnob.getPercentVal();
+      ring.setRedLightCluster(RING_INDICES_TO_EDIT, redKnobPercent);
+      float greenKnobPercent = greenKnob.getPercentVal();
+      ring.setGreenLightCluster(RING_INDICES_TO_EDIT, greenKnobPercent);
+      float blueKnobPercent = blueKnob.getPercentVal();
+      ring.setBlueLightCluster(RING_INDICES_TO_EDIT, blueKnobPercent);
     }
   }
   
@@ -251,6 +274,11 @@
       Don't want to spin until the knob is moved or the a button is pressed by the user
     */
     spinKnob.update();
+    
+    /* Sets the inital values for the rgb knobs */
+    redKnob.update();
+    greenKnob.update();
+    blueKnob.update();
   }
   
   //Look closely at how memory is allocated in the various classes... seems like I might have a mem leak or misallocation somewhere?

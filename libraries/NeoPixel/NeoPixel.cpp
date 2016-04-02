@@ -4,25 +4,25 @@ NeoPixel::NeoPixel(uint8_t arg_startingIndex) {
 	startingIndex = arg_startingIndex;
 }
 
-void NeoPixel::setRed(uint8_t r) {
-	red = getCappedColorValue(r);
+void NeoPixel::setRedPercent(float r) {
+	red = getColorValueForPercent(r);
 }
 
-void NeoPixel::setGreen(uint8_t g) {
-	green = getCappedColorValue(g);
+void NeoPixel::setGreenPercent(float g) {
+	green = getColorValueForPercent(g);
 }
 
-void NeoPixel::setBlue(uint8_t b) {
-	blue = getCappedColorValue(b);
+void NeoPixel::setBluePercent(float b) {
+	blue = getColorValueForPercent(b);
 }
 
-uint8_t NeoPixel::getCappedColorValue(uint8_t colorVal) {
-	if (colorVal < 0) {
-		colorVal = 0;
-	} else if (colorVal > MAX_COLOR_VAL) {
-		colorVal = MAX_COLOR_VAL;
+uint8_t NeoPixel::getColorValueForPercent(float colorValPercent) {
+	if (colorValPercent < 0) {
+		return 0;
+	} else if (colorValPercent > 1) {
+		return MAX_COLOR_VAL;
 	}
-	return colorVal;
+	return colorValPercent * MAX_COLOR_VAL;
 }
 
 bool NeoPixel::updateBlink(long currTime) {
@@ -72,17 +72,17 @@ void NeoPixel::setBrightnessPercent(float arg_brightnessPercent) {
 }
 
 uint8_t NeoPixel::getRed() {
-	float redBrightness = roundf(red*brightnessPercent);
+	float redBrightness = roundf(red*brightnessPercent*BRIGHTNESS_SCALING_FACTOR);
 	return static_cast <uint8_t> (redBrightness);
 }
 
 
 uint8_t NeoPixel::getGreen() {
-	float greenBrightness = roundf(green*brightnessPercent);
+	float greenBrightness = roundf(green*brightnessPercent*BRIGHTNESS_SCALING_FACTOR);
 	return static_cast <uint8_t> (greenBrightness);
 }
 
 uint8_t NeoPixel::getBlue() {
-	float blueBrightness = roundf(blue*brightnessPercent);
+	float blueBrightness = roundf(blue*brightnessPercent*BRIGHTNESS_SCALING_FACTOR);
 	return static_cast <uint8_t> (blueBrightness);
 }

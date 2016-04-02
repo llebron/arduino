@@ -174,37 +174,37 @@ void NeoPixelRing::turnOffLightCluster(int indices[]) {
 	}
 }
 
-void NeoPixelRing::setRedRingIndex(int index, uint8_t red) {
+void NeoPixelRing::setRedRingIndex(int index, float redPercent) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
-	pixel->setRed(red);	
+	pixel->setRedPercent(redPercent);	
 	flagRingIndexChangedSinceLastUpdateIfActive(index);
 	
 }
-void NeoPixelRing::setRedLightCluster(int indices[], uint8_t red) {
+void NeoPixelRing::setRedLightCluster(int indices[], float redPercent) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
-		setRedRingIndex(indices[i], red);
+		setRedRingIndex(indices[i], redPercent);
 	}
 }
 
-void NeoPixelRing::setGreenRingIndex(int index, uint8_t green) {
+void NeoPixelRing::setGreenRingIndex(int index, float greenPercent) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
-	pixel->setGreen(green);	
+	pixel->setGreenPercent(greenPercent);	
 	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
-void NeoPixelRing::setGreenLightCluster(int indices[], uint8_t green) {
+void NeoPixelRing::setGreenLightCluster(int indices[], float greenPercent) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
-		setGreenRingIndex(indices[i], green);
+		setGreenRingIndex(indices[i], greenPercent);
 	}
 }
 
-void NeoPixelRing::setBlueRingIndex(int index, uint8_t blue) {
+void NeoPixelRing::setBlueRingIndex(int index, float bluePercent) {
 	NeoPixel* pixel = getPixelAtRingIndex(index);
-	pixel->setBlue(blue);	
+	pixel->setBluePercent(bluePercent);	
 	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
-void NeoPixelRing::setBlueLightCluster(int indices[], uint8_t blue) {
+void NeoPixelRing::setBlueLightCluster(int indices[], float bluePercent) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
-		setBlueRingIndex(indices[i], blue);
+		setBlueRingIndex(indices[i], bluePercent);
 	}
 }
 
