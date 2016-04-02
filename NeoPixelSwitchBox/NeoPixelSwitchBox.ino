@@ -6,6 +6,14 @@
   Tasks 
   
   updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
+  
+  BUG: when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
+  Or, something else may be going on. Seems like it sometimes gets one more update
+  
+  brightness knob
+  rainbow button
+  random button
+  increment/decrement buttons
   */
   
  
@@ -23,11 +31,19 @@
   /* stand-in until I come up with individualized settings */
   const int DEBOUNCE_TIME = 30;
   
+  // Give a bit of wiggle room to treat a pot as off
+  const float POTENTIOMETER_OFF_MAX_PERCENT = .01;
+ 
   /* spin increment constants */
   const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
   const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
   const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
   const float POTENTIOMETER_MIDDLE_PERCENT = .5;
+  
+  /* Blink constants */
+  const long FASTEST_BLINK_DURATION_MS = 10;
+  const long SLOWEST_BLINK_DURATION_MS = 1000;
+  const long BLINK_DURATION_RANGE_MS = SLOWEST_BLINK_DURATION_MS - FASTEST_BLINK_DURATION_MS;
   
   /* The ring indices to edit with "local" operations like brightness, blink and rgb */
   int RING_INDICES_TO_EDIT[] = {0,1,2};
@@ -50,6 +66,9 @@
   /* Potentiometers on analog inupts*/
   // potentiometer to control ring spin speed
   Potentiometer spinKnob(A0);
+  // Control blink rate for lights being edited
+  Potentiometer blinkKnob(A1);
+  // Control RGB for lights being edited
   Potentiometer redKnob(A3);
   Potentiometer greenKnob(A4);
   Potentiometer blueKnob(A5);
@@ -132,6 +151,9 @@
     updateSpinKnob();
     updateToggleSpinButton();
     
+    // update the blink rate knob
+    updateBlinkKnob();
+    
     updateRGBKnobs();
 
     // update light knobs
@@ -187,6 +209,32 @@
       
       ring.spin(incrementDuration, isClockwise);
       
+    }
+  }
+  
+   void updateBlinkKnob() {
+    blinkKnob.update();
+    if (blinkKnob.valChangedThisUpdate()) {
+      float blinkKnobPercent = blinkKnob.getPercentVal();
+      logger.log("blink knob changed to: ", blinkKnobPercent);
+      
+      /* If the knob is "off" (with some wiggle room), stop blinking and return
+      */
+      if (blinkKnobPercent <= POTENTIOMETER_OFF_MAX_PERCENT) {
+        logger.log("Stop blinking");
+        ring.stopBlinkLightCluster(RING_INDICES_TO_EDIT);
+        return;
+      }
+      
+      /* How much of the increment time range to use (from min - max) is the "opposite" of the blink knob percent amt, since more is less time */
+      float percentOfDurationTimeRange = 1 - blinkKnobPercent;
+      logger.log("Blink knob percentOfIncrementTimeRange", percentOfDurationTimeRange);
+      
+      /* Use this percent to determine the actual increment time*/
+      long blinkDuration = FASTEST_BLINK_DURATION_MS + (BLINK_DURATION_RANGE_MS * percentOfDurationTimeRange);
+      logger.log("Blink knob duration", blinkDuration);
+      
+      ring.blinkLightCluster(RING_INDICES_TO_EDIT, blinkDuration);
     }
   }
   
@@ -269,11 +317,12 @@
     }
   }
   
+  /* Update the knobs so that their values are set internally. 
+    This way, we won't register changes until the knob is moved by the user
+  */
   void initializePotentiometers() {
-    /* Update the spin knob so that its value is set internally. Don't set it to spin at this point. 
-      Don't want to spin until the knob is moved or the a button is pressed by the user
-    */
     spinKnob.update();
+    blinkKnob.update();
     
     /* Sets the inital values for the rgb knobs */
     redKnob.update();
