@@ -5,14 +5,14 @@
   /*
   Tasks 
   
-  updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
-  
-  BUG (believe I fixed it): when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
-  Or, something else may be going on. Seems like it sometimes gets one more update. 
-  
-  rainbow button
-  random button
-  increment/decrement buttons
+  Test fixes for:
+    updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
+    
+    BUG (believe I fixed it): when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
+    Or, something else may be going on. Seems like it sometimes gets one more update. 
+    
+  TODO:
+    increment/decrement buttons
   */ 
   
   // have to include libraries referenced within libraries in the sketch as well!
@@ -135,13 +135,10 @@
     updateBlinkKnob();
     updateBrightnessKnob();
     updateRGBKnobs();
-
-    // update light knobs
-    // update blink and brightness sliders
-    // update switches and other buttons
     
-    // update the status of all switches/buttons - might be worth putting them in an array to make it an easy loop
+    // update the status of buttons
     updateRandomButton();
+    updateRainbowButton();
   }
   
   boolean potentiometerPercentAtMiddle(float percent) {
@@ -151,6 +148,12 @@
   void updateSpinKnob() {
     spinKnob.update();
     if (spinKnob.valChangedThisUpdate()) {
+      handleSendSpinState();
+    }
+  }
+  
+  /* Broke this out into a separate method so it can be transmitted at startup */
+  vod handleSendSpinState() {
       float spinKnobPercent = spinKnob.getPercentVal();
       logger.log("spin knob changed to: ", spinKnobPercent);
       
@@ -308,7 +311,15 @@
     This way, we won't register changes until the knob is moved by the user
   */
   void initializePotentiometers() {
+    // For the spin knob - if the spin knob isn't centered at start, actually send the state to the ring, and then stop spinning at init
+    // This will allow the spin toggle button to function without having touched the spin knob first
     spinKnob.update();
+    if (!potentiometerPercentAtMiddle(spinKnobPercent)) {
+      handleSendSpinState();
+      ring.toggleSpin();
+    }
+    
+    
     blinkKnob.update();
     brightnessKnob.update();
     redKnob.update();
