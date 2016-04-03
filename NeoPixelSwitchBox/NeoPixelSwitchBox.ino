@@ -7,10 +7,9 @@
   
   updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
   
-  BUG: when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
-  Or, something else may be going on. Seems like it sometimes gets one more update
+  BUG (believe I fixed it): when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
+  Or, something else may be going on. Seems like it sometimes gets one more update. 
   
-  brightness knob
   rainbow button
   random button
   increment/decrement buttons
@@ -31,12 +30,17 @@
   
   // Give a bit of wiggle room to treat a pot as off
   const float POTENTIOMETER_OFF_MAX_PERCENT = .01;
+  
+  // Range for the potentiometer to be considered "at middle"
+  const float POTENTIOMETER_LOWER_MIDDLE_PERCENT = .49;
+  const float POTENTIOMETER_UPPER_MIDDLE_PERCENT = .51;
+  // absolute middle value for potentiometer
+  const float POTENTIOMETER_MIDDLE_PERCENT = .5;
  
   /* spin increment constants */
   const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
   const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
   const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
-  const float POTENTIOMETER_MIDDLE_PERCENT = .5;
   
   /* Blink constants */
   const long FASTEST_BLINK_DURATION_MS = 10;
@@ -144,16 +148,18 @@
     updateRandomButton();
   }
   
+  boolean potentiometerPercentAtMiddle(float percent) {
+    return POTENTIOMETER_LOWER_MIDDLE_PERCENT <= percent && percent <= POTENTIOMETER_UPPER_MIDDLE_PERCENT;
+  }
+  
   void updateSpinKnob() {
     spinKnob.update();
     if (spinKnob.valChangedThisUpdate()) {
       float spinKnobPercent = spinKnob.getPercentVal();
       logger.log("spin knob changed to: ", spinKnobPercent);
       
-      /* If the knob is centered, send the special flag to the ring to stop spinning, and return 
-        TODO: probably want a delta here to give a bit of wiggle room for getting "close to center"
-      */
-      if (spinKnobPercent == POTENTIOMETER_MIDDLE_PERCENT) {
+      /* If the knob is centered, send the special flag to the ring to stop spinning, and return */
+      if (potentiometerPercentAtMiddle(spinKnobPercent)) {
         logger.log("Spin knob at center");
         ring.spin(-1, true);
         return;

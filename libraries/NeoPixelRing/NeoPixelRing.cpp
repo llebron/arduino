@@ -236,6 +236,8 @@ void NeoPixelRing::stopBlinkRingIndex(int index) {
 	NeoPixel* pixel = pixels[startingIndexForRingIndex];
 	pixel->stopBlink();	
 	blinkingPixels[startingIndexForRingIndex] = false;
+	// manually flag the ring index as changed, since it'll no longer be processed by the blink update
+	flagRingIndexChangedSinceLastUpdateIfActive(index);
 }
 void NeoPixelRing::stopBlinkLightCluster(int indices[]) {
 	for (int i = 0; i < numLightsPerCluster; i++) {
