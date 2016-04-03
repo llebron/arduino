@@ -59,8 +59,8 @@
   /* has the random number generator been seeded? Set true the first time random is used */
   bool seededRand = false;
   
-  /* For prototyping, use this offset to place light switches from pins 2 - 9, instead of 0-7, because pins 0 and 1 are used for serial communication */
-  const int LIGHT_SWITCH_PIN_OFFSET = 2;
+   /* Place light switches on 2 - 9, because pins 0 and 1 are used for serial communication */
+  const int FIRST_LIGHT_SWITCH_PIN = 2;
   
   /* The 8 light switches and the sets of lights they control*/
   Switch* lightSwitches[NUM_LIGHT_SWITCHES];
@@ -68,6 +68,15 @@
   
   // ring size NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH assigned for each switch, on pin 13
   NeoPixelRing ring(NUM_LIGHTS, NUM_LIGHTS_PER_SWITCH, 13);
+  
+  //button on pin 10, debounce for DEBOUNCE_TIME
+  Switch randomButton(10, DEBOUNCE_TIME);
+  
+  //button on pin 11, debounce for DEBOUNCE_TIME
+  Switch rainbow(11, DEBOUNCE_TIME);
+  
+  /* Buttons */
+  Switch toggleSpinButton(12, DEBOUNCE_TIME);
   
   /* Potentiometers on analog inupts*/
   // potentiometer to control ring spin speed
@@ -81,11 +90,7 @@
   Potentiometer greenKnob(A4);
   Potentiometer blueKnob(A5);
   
-  /* Buttons */
-  Switch toggleSpinButton(10, DEBOUNCE_TIME);
-  
-  //button on pin 12, debounce for DEBOUNCE_TIME
-  Switch randomButton(12, DEBOUNCE_TIME);
+
   
   void setup() {
      Serial.begin(9600);  
@@ -263,14 +268,12 @@
     // track the light ring indices to assign for the switch
     int lightRingIndex = 0;
     
-    for (int i = 0; i < NUM_LIGHT_SWITCHES; i++) {
+    for (int i = FIRST_LIGHT_SWITCH_PIN; i < NUM_LIGHT_SWITCHES; i++) {
       
-      // For prototyping, using offset so I retain use of serial communication, which requires pins 0 and 1
-      int switchPin = i+LIGHT_SWITCH_PIN_OFFSET;
-      lightSwitches[i] = new Switch(switchPin, DEBOUNCE_TIME); 
+      lightSwitches[i] = new Switch(i, DEBOUNCE_TIME); 
       
       for (int j = 0; j < NUM_LIGHTS_PER_SWITCH ; j++) {
-        //logger.log("lightsForSwitch ", i, " ", lightRingIndex);
+        logger.log("lightsForSwitch ", i, " ", lightRingIndex);
         lightsForSwitches[i][j] = lightRingIndex;
         lightRingIndex++;
       }
