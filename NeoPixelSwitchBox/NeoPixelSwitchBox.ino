@@ -73,7 +73,7 @@
   Switch randomButton(10, DEBOUNCE_TIME);
   
   //button on pin 11, debounce for DEBOUNCE_TIME
-  Switch rainbow(11, DEBOUNCE_TIME);
+  Switch rainbowButton(11, DEBOUNCE_TIME);
   
   /* Buttons */
   Switch toggleSpinButton(12, DEBOUNCE_TIME);
@@ -153,49 +153,47 @@
   }
   
   /* Broke this out into a separate method so it can be transmitted at startup */
-  vod handleSendSpinState() {
-      float spinKnobPercent = spinKnob.getPercentVal();
-      logger.log("spin knob changed to: ", spinKnobPercent);
-      
-      /* If the knob is centered, send the special flag to the ring to stop spinning, and return */
-      if (potentiometerPercentAtMiddle(spinKnobPercent)) {
-        logger.log("Spin knob at center");
-        ring.spin(-1, true);
-        return;
-      }
-      
-      /* 
-        Clockwise if spin pot is >= midpoint 
-        Determine "raw" amount spin knob is turned from center (.5 max since it's from 0-1)
-      */
-      boolean isClockwise;
-      float rawSpinKnobAmtTurnedFromCenter;
-      if (spinKnobPercent >= POTENTIOMETER_MIDDLE_PERCENT) {
-        isClockwise = true;
-        rawSpinKnobAmtTurnedFromCenter = spinKnobPercent - .5;
-        logger.log("Spin knob clockwise", rawSpinKnobAmtTurnedFromCenter);
-      } else {
-        isClockwise = false;
-        rawSpinKnobAmtTurnedFromCenter = .5 - spinKnobPercent;
-        logger.log("Spin knob counter clockwise", rawSpinKnobAmtTurnedFromCenter);
-      }
-      
-      /* Percent the spin knob is away from center (0-1) */
-      float percentSpinKnobAmtTurnedFromCenter = rawSpinKnobAmtTurnedFromCenter / .5;
-      logger.log("Spin knob percentSpinKnobAmtTurnedFromCenter", percentSpinKnobAmtTurnedFromCenter);
-      
-      /* How much of the increment time range to use (from min - max) is the "opposite" of the spin knob percent amt, since more is less time */
-      float percentOfIncrementTimeRange = 1 - percentSpinKnobAmtTurnedFromCenter;
-      logger.log("Spin knob percentOfIncrementTimeRange", percentOfIncrementTimeRange);
-      
-      /* Use this percent to determine the actual increment time*/
-      long incrementDuration = FASTEST_SPIN_INCREMENT_DURATION_MS + (SPIN_INCREMENT_DURATION_RANGE_MS * percentOfIncrementTimeRange);
-      logger.log("Spin knob incrementDuration", incrementDuration);
-      
-      ring.spin(incrementDuration, isClockwise);
-      
+  void handleSendSpinState() {
+    float spinKnobPercent = spinKnob.getPercentVal();
+    logger.log("spin knob changed to: ", spinKnobPercent);
+    
+    /* If the knob is centered, send the special flag to the ring to stop spinning, and return */
+    if (potentiometerPercentAtMiddle(spinKnobPercent)) {
+      logger.log("Spin knob at center");
+      ring.spin(-1, true);
+      return;
     }
-  }
+    
+    /* 
+      Clockwise if spin pot is >= midpoint 
+      Determine "raw" amount spin knob is turned from center (.5 max since it's from 0-1)
+    */
+    boolean isClockwise;
+    float rawSpinKnobAmtTurnedFromCenter;
+    if (spinKnobPercent >= POTENTIOMETER_MIDDLE_PERCENT) {
+      isClockwise = true;
+      rawSpinKnobAmtTurnedFromCenter = spinKnobPercent - .5;
+      logger.log("Spin knob clockwise", rawSpinKnobAmtTurnedFromCenter);
+    } else {
+      isClockwise = false;
+      rawSpinKnobAmtTurnedFromCenter = .5 - spinKnobPercent;
+      logger.log("Spin knob counter clockwise", rawSpinKnobAmtTurnedFromCenter);
+    }
+    
+    /* Percent the spin knob is away from center (0-1) */
+    float percentSpinKnobAmtTurnedFromCenter = rawSpinKnobAmtTurnedFromCenter / .5;
+    logger.log("Spin knob percentSpinKnobAmtTurnedFromCenter", percentSpinKnobAmtTurnedFromCenter);
+    
+    /* How much of the increment time range to use (from min - max) is the "opposite" of the spin knob percent amt, since more is less time */
+    float percentOfIncrementTimeRange = 1 - percentSpinKnobAmtTurnedFromCenter;
+    logger.log("Spin knob percentOfIncrementTimeRange", percentOfIncrementTimeRange);
+    
+    /* Use this percent to determine the actual increment time*/
+    long incrementDuration = FASTEST_SPIN_INCREMENT_DURATION_MS + (SPIN_INCREMENT_DURATION_RANGE_MS * percentOfIncrementTimeRange);
+    logger.log("Spin knob incrementDuration", incrementDuration);
+    
+    ring.spin(incrementDuration, isClockwise); 
+   }
   
    void updateBlinkKnob() {
     blinkKnob.update();
@@ -252,6 +250,13 @@
      if (toggleSpinButton.closedThisUpdate()) {
        logger.log("toggle spin button closed ");
        ring.toggleSpin();
+     }
+  }
+  
+  void updateRainbowButton() {
+     rainbowButton.update();
+     if (rainbowButton.closedThisUpdate()) {
+       ring.rainbow();
      }
   }
   
@@ -314,11 +319,10 @@
     // For the spin knob - if the spin knob isn't centered at start, actually send the state to the ring, and then stop spinning at init
     // This will allow the spin toggle button to function without having touched the spin knob first
     spinKnob.update();
-    if (!potentiometerPercentAtMiddle(spinKnobPercent)) {
+    if (!potentiometerPercentAtMiddle(spinKnob.getPercentVal())) {
       handleSendSpinState();
       ring.toggleSpin();
     }
-    
     
     blinkKnob.update();
     brightnessKnob.update();
