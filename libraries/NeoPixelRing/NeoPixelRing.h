@@ -27,10 +27,6 @@ Nice to have: accel/decel for spin
 #include "../NeoPixel/NeoPixel.h"
 #include "../Log/log.h"
 
-// Maximums used by randomize()
-const int MAX_RANDOM_SPIN_INCREMENT_DURATION = 3000;
-const int MAX_RANDOM_BLINK_LENGTH = 5000;
-
 // spinIncrementDuration flag used to stop the spin
 const long STOP_SPIN_INCREMENT_DURATION = -1;
 // lastSpinIncrementTime flag used to guarantee the next update will increment the offset
@@ -141,8 +137,10 @@ public:
 		Set all pixels to random colors, brightness and blink rate
 		Set ring to random spin
 		DOES NOT affect the ring index active statuses, which are controlled switches 
+		likelihood of blinking/spinning is determined by a random "die roll"
+		e.g. chance of 1 in 6 if a D6 is stated
 	*/
-	void randomize();
+	void randomize(int blinkDieRollSides, long maxBlinkDuration, int spinDieRollSides, long maxSpinIncrementDuration);
 	
 	/** 
 		Set the ring colors to a rainbow, max brightness and stops all blinking

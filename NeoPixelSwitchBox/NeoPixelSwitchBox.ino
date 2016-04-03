@@ -47,6 +47,10 @@
   const long SLOWEST_BLINK_DURATION_MS = 1000;
   const long BLINK_DURATION_RANGE_MS = SLOWEST_BLINK_DURATION_MS - FASTEST_BLINK_DURATION_MS;
   
+  /* Random constants */
+  const int BLINK_DIE_ROLL_SIDES = 6;
+  const int SPIN_DIE_ROLL_SIDES = 3;
+  
   /* The ring indices to edit with "local" operations like brightness, blink and rgb */
   int RING_INDICES_TO_EDIT[] = {0,1,2};
   
@@ -82,19 +86,6 @@
   
   //button on pin 12, debounce for DEBOUNCE_TIME
   Switch randomButton(12, DEBOUNCE_TIME);
-  
-  /* 
-    
-    initialize the switches/buttons 
-    initialize pots
-    - guess I should just set everything based on the hardware to start
-    or - start with defaults and then update state once there's a change - might be trickier than it's worth
-    
-    SPIN
-    Set up knob to have guarantee it's possible to stop the spin in the center of the knob - maybe with a detent?
-    Need to initialize the spin speed knob, pulling the current value. If it's non-center, should probably still start "stopped". Might need to alter the neopixelring constructor to support these inits..
-  
-  */  
   
   void setup() {
      Serial.begin(9600);  
@@ -266,7 +257,7 @@
          randomSeed(millis());
          seededRand = true;
        }
-       ring.randomize();
+       ring.randomize(BLINK_DIE_ROLL_SIDES, SLOWEST_BLINK_DURATION_MS, SPIN_DIE_ROLL_SIDES, SLOWEST_SPIN_INCREMENT_DURATION_MS);
      }
   }
  

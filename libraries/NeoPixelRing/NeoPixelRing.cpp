@@ -305,26 +305,22 @@ void NeoPixelRing::adjustSpinOffset(int amt) {
 
 
 
-void NeoPixelRing::randomize() {
+void NeoPixelRing::randomize(int blinkDieRollSides, long maxBlinkDuration, int spinDieRollSides, long maxSpinIncrementDuration) {
 	// set per-pixel values
 	for (int i = 0; i < size; i++) {
 		// random color
-		uint8_t r = random(MAX_COLOR_VAL+1);
-		uint8_t g = random(MAX_COLOR_VAL+1);
-		uint8_t b = random(MAX_COLOR_VAL+1);
-		setRedRingIndex(i, r);
-		setGreenRingIndex(i, g);
-		setBlueRingIndex(i, b);		
+		setRedRingIndex		(i, random(101) / 100.0);
+		setGreenRingIndex	(i, random(101) / 100.0);
+		setBlueRingIndex	(i, random(101) / 100.0);	
 		
 		// random brightness
-		float brightnessPercent = random(101) / 100.0;
-		setBrightnessPercentRingIndex(i, brightnessPercent);
+		setBrightnessPercentRingIndex(i, random(101) / 100.0);
 		
 		// random blink
-		int blinkChance = random(1, 6);
-		int isBlink = random(blinkChance) == 0;
+		int blinkRoll = random(blinkDieRollSides);
+		int isBlink = blinkRoll== 0;
 		if (isBlink) {
-			long blinkLength = random(MAX_RANDOM_BLINK_LENGTH+1);
+			long blinkLength = random(maxBlinkDuration+1);
 			blinkRingIndex(i, blinkLength);
 		} else {
 			stopBlinkRingIndex(i);
@@ -332,9 +328,10 @@ void NeoPixelRing::randomize() {
 	}
 	
 	// random spin
-	int isSpin = random(2) == 0;
+	int spinRoll = random(spinDieRollSides);
+	int isSpin = spinRoll == 0;
 	if (isSpin) {
-		long spinIncrementDuration = random(MAX_RANDOM_SPIN_INCREMENT_DURATION+1);
+		long spinIncrementDuration = random(maxSpinIncrementDuration+1);
 		bool isClockwise = random(2) == 0;
 		spin(spinIncrementDuration, isClockwise);
 	} else {
