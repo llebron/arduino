@@ -247,8 +247,6 @@
      }
   }
   
-  
-  
   void updateRandomButton() {
      randomButton.update();
      if (randomButton.closedThisUpdate()) {

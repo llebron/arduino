@@ -347,9 +347,9 @@ void NeoPixelRing::rainbow() {
 	}
 	
 	for (int i=0; i < size; i++) {
-		uint8_t r = rainbowColors[i*3];
-		uint8_t g = rainbowColors[i*3+1];
-		uint8_t b = rainbowColors[i*3+2];
+		float r = rainbowColors[i*3];
+		float g = rainbowColors[i*3+1];
+		float b = rainbowColors[i*3+2];
 		
 		setRedRingIndex(i, r);
 		setGreenRingIndex(i, g);
