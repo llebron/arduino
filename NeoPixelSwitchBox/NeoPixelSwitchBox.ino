@@ -11,8 +11,12 @@
     BUG (believe I fixed it): when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
     Or, something else may be going on. Seems like it sometimes gets one more update. 
     
-  TODO:
+   Functionality test:
     increment/decrement buttons
+    rainbow
+    random
+        
+    Concerned that I may have now run it out of memory again...
   */ 
   
   // have to include libraries referenced within libraries in the sketch as well!
@@ -59,6 +63,10 @@
   /* has the random number generator been seeded? Set true the first time random is used */
   bool seededRand = false;
   
+  /* Increment/decrement spin buttons on pins 0/1 - need to disable if want serial communication */
+  Switch incrementSpinButton(0, DEBOUNCE_TIME);
+  Switch decrementSpinButton(1, DEBOUNCE_TIME);
+  
    /* Place light switches on 2 - 9, because pins 0 and 1 are used for serial communication */
   const int FIRST_LIGHT_SWITCH_PIN = 2;
   
@@ -75,7 +83,7 @@
   //button on pin 11, debounce for DEBOUNCE_TIME
   Switch rainbowButton(11, DEBOUNCE_TIME);
   
-  /* Buttons */
+  // button on pin 12 - toggle spin on/off
   Switch toggleSpinButton(12, DEBOUNCE_TIME);
   
   /* Potentiometers on analog inupts*/
@@ -93,7 +101,7 @@
 
   
   void setup() {
-     Serial.begin(9600);  
+    Serial.begin(9600);  
     logger.log("--- Start Serial Monitor ");
     
     /* 
@@ -130,6 +138,9 @@
     // update the spin knob before the spin toggle, just in case they both change on the same update. Want the button to override */
     updateSpinKnob();
     updateToggleSpinButton();
+    
+    // update the increment/decrement buttons
+    updateIncrementButtons();
     
     // update the other pots
     updateBlinkKnob();
@@ -251,6 +262,21 @@
        logger.log("toggle spin button closed ");
        ring.toggleSpin();
      }
+  }
+  
+  void updateIncrementButtons() {
+    
+    // spin increment button adjusts the spin clockwise by NUM_LIGHTS_PER_SWITCH
+    incrementSpinButton.update();
+    if (incrementSpinButton.closedThisUpdate()) {
+      ring.adjustSpinOffset(NUM_LIGHTS_PER_SWITCH);
+    }
+    
+    // spin decrement button adjusts the spin counter-clockwise by NUM_LIGHTS_PER_SWITCH
+    decrementSpinButton.update();
+    if (incrementSpinButton.closedThisUpdate()) {
+      ring.adjustSpinOffset(-NUM_LIGHTS_PER_SWITCH);
+    }
   }
   
   void updateRainbowButton() {
