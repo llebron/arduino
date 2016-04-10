@@ -274,7 +274,7 @@
     
     // spin decrement button adjusts the spin counter-clockwise by NUM_LIGHTS_PER_SWITCH
     decrementSpinButton.update();
-    if (incrementSpinButton.closedThisUpdate()) {
+    if (decrementSpinButton.closedThisUpdate()) {
       ring.adjustSpinOffset(-NUM_LIGHTS_PER_SWITCH);
     }
   }
