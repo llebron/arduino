@@ -266,7 +266,7 @@
   
   void updateIncrementButtons() {
     
-    // spin increment button adjusts the spin clockwise by NUM_LIGHTS_PER_SWITCH
+	// spin increment button adjusts the spin clockwise by NUM_LIGHTS_PER_SWITCH
     incrementSpinButton.update();
     if (incrementSpinButton.closedThisUpdate()) {
       ring.adjustSpinOffset(NUM_LIGHTS_PER_SWITCH);
