@@ -273,6 +273,8 @@
      rainbowButton.update();
      if (rainbowButton.closedThisUpdate()) {
        ring.rainbow();
+       // spin the ring too, because it's cool!
+       ring.spin(50, true);
      }
   }
   
