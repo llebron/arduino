@@ -118,17 +118,17 @@
   }
   
   void loop() {
-    //printFreeMemory();
+    printFreeMemory();
     
     // first, update all inputs - switches, knobs, etc - 
     updateComponents();
     
-    //printFreeMemory();
+    printFreeMemory();
     
     // Finally, update the ring itself, which should now have all current state, and will be able to determine if it needs to refresh
     ring.update();
     
-    //printFreeMemory();
+    printFreeMemory();
   
   }
   
@@ -149,7 +149,7 @@
     
     // update the status of buttons
     updateRandomButton();
-    updateRainbowButton();
+    //updateRainbowButton();
   }
   
   boolean potentiometerPercentAtMiddle(float percent) {
@@ -266,7 +266,7 @@
   
   void updateIncrementButtons() {
     
-	// spin increment button adjusts the spin clockwise by NUM_LIGHTS_PER_SWITCH
+    // spin increment button adjusts the spin clockwise by NUM_LIGHTS_PER_SWITCH
     incrementSpinButton.update();
     if (incrementSpinButton.closedThisUpdate()) {
       ring.adjustSpinOffset(NUM_LIGHTS_PER_SWITCH);
@@ -282,6 +282,7 @@
   void updateRainbowButton() {
      rainbowButton.update();
      if (rainbowButton.closedThisUpdate()) {
+       logger.log("call rainbow");
        ring.rainbow();
      }
   }
@@ -302,24 +303,25 @@
     // track the light ring indices to assign for the switch
     int lightRingIndex = 0;
     
-    for (int i = FIRST_LIGHT_SWITCH_PIN; i < NUM_LIGHT_SWITCHES; i++) {
+    for (int switchNum=0, pin = FIRST_LIGHT_SWITCH_PIN; switchNum < NUM_LIGHT_SWITCHES; switchNum++, pin++) {
+      printFreeMemory();
       
-      lightSwitches[i] = new Switch(i, DEBOUNCE_TIME); 
+      lightSwitches[switchNum] = new Switch(pin, DEBOUNCE_TIME); 
       
       for (int j = 0; j < NUM_LIGHTS_PER_SWITCH ; j++) {
-        logger.log("lightsForSwitch ", i, " ", lightRingIndex);
-        lightsForSwitches[i][j] = lightRingIndex;
+        logger.log("lightsForSwitch ", switchNum, " ", lightRingIndex);
+        lightsForSwitches[switchNum][j] = lightRingIndex;
         lightRingIndex++;
       }
       
-      logger.log("init light switch ", i);
+      logger.log("init light switch ", switchNum);
       /* Set lights on/off based on initial state */
-      if (lightSwitches[i]->isClosed()) {
+      if (lightSwitches[switchNum]->isClosed()) {
          logger.log(" closed");
-         ring.turnOnLightCluster(lightsForSwitches[i]);
+         ring.turnOnLightCluster(lightsForSwitches[switchNum]);
       } else {
         logger.log(" open");
-        ring.turnOffLightCluster(lightsForSwitches[i]);
+        ring.turnOffLightCluster(lightsForSwitches[switchNum]);
       }
     }
   }
@@ -335,6 +337,7 @@
         logger.log("light switch opened ", i);
         ring.turnOffLightCluster(lightsForSwitches[i]);
       }
+      printFreeMemory();
     }
   }
   
@@ -357,7 +360,6 @@
     blueKnob.update();
   }
   
-  //Look closely at how memory is allocated in the various classes... seems like I might have a mem leak or misallocation somewhere?
   void printFreeMemory() {
     logger.log(" free mem: ", availableMemory(), ", ", freeMemory());
   }

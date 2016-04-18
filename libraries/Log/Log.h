@@ -12,6 +12,7 @@ A simple library for logging, wrapped around Serial.print
 
 class Log {
 public:
+	
 	void log(String msg) {
 		if (isLogging) {
 			Serial.println(msg);
@@ -80,7 +81,7 @@ public:
 
 	
 private:
-	const bool isLogging = false;
+	bool isLogging = true;
 };
 
 #endif
