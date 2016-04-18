@@ -340,30 +340,23 @@ void NeoPixelRing::randomize(int blinkDieRollSides, long maxBlinkDuration, int s
 }
 
 void NeoPixelRing::rainbow() {
-	/*Issue seems to be here - when I just return, it runs fine.
-	When I don't, it seems to crash somehow, even though it never seems to be called....
-	*/
-	
 	// hard-coded to 24 index ring - 
 	// general solution to the rainbow color transition needed for other sizes
 	if (size != 24) {
 		return;
 	}
 	
-	for (int i=0; i < size; i+=3) {
-		logger.log("rainbow before: " , i);
-		float r = rainbowColors[i];
-		float g = 0.0;//rainbowColors[i+1];
-		float b = 0.0;//rainbowColors[i+2];
+	for (int ringIndex=0, colorIndex=0; ringIndex < size; ringIndex++, colorIndex+=3) {
+		float r = rainbowColors[colorIndex]/100.0;;
+		float g = rainbowColors[colorIndex+1]/100.0;
+		float b = rainbowColors[colorIndex+2]/100.0;
 		
-		logger.log("rainbow: " , i);
+		setRedRingIndex(ringIndex, r);
+		setGreenRingIndex(ringIndex, g);
+		setBlueRingIndex(ringIndex, b);
 		
-		setRedRingIndex(i, r);
-		setGreenRingIndex(i, g);
-		setBlueRingIndex(i, b);
-		
-		setBrightnessPercentRingIndex(i,1);
-		stopBlinkRingIndex(i);
+		setBrightnessPercentRingIndex(ringIndex,1);
+		stopBlinkRingIndex(ringIndex);
 	}
 }
 

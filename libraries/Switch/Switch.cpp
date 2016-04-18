@@ -1,6 +1,6 @@
 #include "Switch.h"
 
-Switch::Switch(int newSwitchPin, int debDelay) {
+Switch::Switch(uint8_t newSwitchPin, uint8_t debDelay) {
 	switchPin = newSwitchPin;
 	pinMode(switchPin, INPUT_PULLUP);//activate pullup resistor
 	toggleTime = -1;

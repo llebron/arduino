@@ -81,7 +81,7 @@ public:
 
 	
 private:
-	bool isLogging = true;
+	bool isLogging = false;
 };
 
 #endif

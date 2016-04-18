@@ -1,6 +1,6 @@
 #include "Potentiometer.h"
 
-Potentiometer::Potentiometer(int arg_pin) {
+Potentiometer::Potentiometer(uint8_t arg_pin) {
 	potPin = arg_pin;
 	changedThisUpdate = false;
 	// initialize to the current value

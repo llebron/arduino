@@ -18,7 +18,7 @@ const int MIN_CHANGE_DELTA = 11;
 
 class Potentiometer {
 public:
-	Potentiometer(int potPin);
+	Potentiometer(uint8_t potPin);
 	
 	//update the pot, must be called every loop for best accuracy
 	void update();
@@ -31,7 +31,7 @@ public:
 	
 	
 private:
-	int potPin; //the pot pin
+	uint8_t potPin; //the pot pin
 	int lastAcknowledgedReading; // the last pot reading acknowledged as actual input
 	bool changedThisUpdate = false; // did the pot change this update?
 };

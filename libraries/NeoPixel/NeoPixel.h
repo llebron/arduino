@@ -78,7 +78,7 @@ private:
 	// when did blink last toggle
 	long blinkToggleTime = millis();
 	// how long is blink on/off
-	long blinkLength = 0; 
+	int blinkLength = 0; 
 };
 
 #endif

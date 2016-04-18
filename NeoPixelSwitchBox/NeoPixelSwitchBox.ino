@@ -7,16 +7,6 @@
   
   Test fixes for:
     updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
-    
-    BUG (believe I fixed it): when calling stopBlinking, if the light is off, won't turn on because it won't be queried during updateBlinkingLights. 
-    Or, something else may be going on. Seems like it sometimes gets one more update. 
-    
-   Functionality test:
-    increment/decrement buttons
-    rainbow
-    random
-        
-    Concerned that I may have now run it out of memory again...
   */ 
   
   // have to include libraries referenced within libraries in the sketch as well!
@@ -24,7 +14,6 @@
   #include <math.h>
   #include <NeoPixel.h>  
   #include <NeoPixelRing.h>
-  #include <MemoryFree.h>
   
   const int NUM_LIGHTS = 24;
   const int NUM_LIGHT_SWITCHES = 8;
@@ -36,20 +25,20 @@
   const float POTENTIOMETER_OFF_MAX_PERCENT = .01;
   
   // Range for the potentiometer to be considered "at middle"
-  const float POTENTIOMETER_LOWER_MIDDLE_PERCENT = .49;
-  const float POTENTIOMETER_UPPER_MIDDLE_PERCENT = .51;
+  const float POTENTIOMETER_LOWER_MIDDLE_PERCENT = .48;
+  const float POTENTIOMETER_UPPER_MIDDLE_PERCENT = .52;
   // absolute middle value for potentiometer
   const float POTENTIOMETER_MIDDLE_PERCENT = .5;
  
   /* spin increment constants */
-  const long FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
-  const long SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
-  const long SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
+  const int FASTEST_SPIN_INCREMENT_DURATION_MS = 10;
+  const int SLOWEST_SPIN_INCREMENT_DURATION_MS = 800;
+  const int SPIN_INCREMENT_DURATION_RANGE_MS = SLOWEST_SPIN_INCREMENT_DURATION_MS - FASTEST_SPIN_INCREMENT_DURATION_MS;
   
   /* Blink constants */
-  const long FASTEST_BLINK_DURATION_MS = 10;
-  const long SLOWEST_BLINK_DURATION_MS = 1000;
-  const long BLINK_DURATION_RANGE_MS = SLOWEST_BLINK_DURATION_MS - FASTEST_BLINK_DURATION_MS;
+  const int FASTEST_BLINK_DURATION_MS = 10;
+  const int SLOWEST_BLINK_DURATION_MS = 1000;
+  const int BLINK_DURATION_RANGE_MS = SLOWEST_BLINK_DURATION_MS - FASTEST_BLINK_DURATION_MS;
   
   /* Random constants */
   const int BLINK_DIE_ROLL_SIDES = 6;
@@ -68,7 +57,7 @@
   Switch decrementSpinButton(1, DEBOUNCE_TIME);
   
    /* Place light switches on 2 - 9, because pins 0 and 1 are used for serial communication */
-  const int FIRST_LIGHT_SWITCH_PIN = 2;
+  const uint8_t FIRST_LIGHT_SWITCH_PIN = 2;
   
   /* The 8 light switches and the sets of lights they control*/
   Switch* lightSwitches[NUM_LIGHT_SWITCHES];
@@ -118,6 +107,7 @@
   }
   
   void loop() {
+    
     printFreeMemory();
     
     // first, update all inputs - switches, knobs, etc - 
@@ -149,7 +139,7 @@
     
     // update the status of buttons
     updateRandomButton();
-    //updateRainbowButton();
+    updateRainbowButton();
   }
   
   boolean potentiometerPercentAtMiddle(float percent) {
@@ -282,7 +272,6 @@
   void updateRainbowButton() {
      rainbowButton.update();
      if (rainbowButton.closedThisUpdate()) {
-       logger.log("call rainbow");
        ring.rainbow();
      }
   }
@@ -361,7 +350,7 @@
   }
   
   void printFreeMemory() {
-    logger.log(" free mem: ", availableMemory(), ", ", freeMemory());
+    //logger.log(" free mem: ", availableMemory());
   }
   
   int availableMemory() {

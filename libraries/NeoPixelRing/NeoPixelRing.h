@@ -33,33 +33,33 @@ const long STOP_SPIN_INCREMENT_DURATION = -1;
 const long INCREMENT_SPIN_AT_NEXT_UPDATE = LONG_MIN;
 
 // fixed array for range for Red->Orange->Yellow->Green->Blue->Indigo->Violet
-// hard-coded for a 24-index ring
-const float rainbowColors[] = 
+// hard-coded for a 24-index ring - uses uint8_t to represent percents out of 100 to save memory
+const uint8_t rainbowColors[] = 
 {
-	1.00,		0.00,		0.00,
-	1.00,		.161,		0.00,
-	1.00,		.325,		0.00,
-	1.00,		.486,		0.00,
-	1.00,		.647,		0.00,
-	1.00,		.765,		0.00,
-	1.00,		.882,		0.00,
-	1.00,		1.00,		0.00,
-	.749,		.875,		0.00,
-	.502,		.753,		0.00,
-	.251,		.627,		0.00,
-	0.00,		.502,		0.00,
-	0.00,		.376,		.251,
-	0.00,		.251,		.502,
-	0.00,		.125,		.749,
-	0.00,		0.00,		1.00,
-	.075,		0.00,		.878,
-	.149,		0.00,		.757,
-	.220,		0.00,		.631,
-	.294,		0.00,		.510,
-	.455,		.129,		.616,
-	.616,		.259,		.722,
-	.773,		.384,		.827,
-	.933,		.510,		.933
+	100,	0,		0,
+	100,	16,		0,
+	100,	33,		0,
+	100,	49,		0,
+	100,	65,		0,
+	100,	77,		0,
+	100,	88,		0,
+	100,	100,	0,
+	75,		88,		0,
+	50,		75,		0,
+	25,		63,		0,
+	0,		50,		0,
+	0,		38,		25,
+	0,		25,		50,
+	0,		12,		75,
+	0,		0,		100,
+	8,		0,		88,
+	15,		0,		76,
+	22,		0,		63,
+	29,		0,		51,
+	46,		13,		62,
+	62,		26,		72,
+	77,		38,		83,
+	93,		51,		93
 };
 
 class NeoPixelRing {
@@ -213,7 +213,7 @@ private:
 	// is the ring spinning?
 	bool isSpinning = false;
 	// how long between spin increments - initialized to the "null" duration
-	long spinIncrementDuration = STOP_SPIN_INCREMENT_DURATION;
+	int spinIncrementDuration = STOP_SPIN_INCREMENT_DURATION;
 	// is the ring spinning clockwise or counter clockwise?
 	bool isClockwiseSpin = true;
 	// tracking last time spin was incremented
