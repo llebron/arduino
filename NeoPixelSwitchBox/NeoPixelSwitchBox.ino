@@ -2,13 +2,6 @@
   #include <Potentiometer.h>
   #include <Switch.h>
   
-  /*
-  Tasks 
-  
-  Test fixes for:
-    updateSpinKnob() should probably have a delta to allow for "close to center" to stop it
-  */ 
-  
   // have to include libraries referenced within libraries in the sketch as well!
   #include <Adafruit_NeoPixel.h>
   #include <math.h>
